@@ -1,4 +1,17 @@
 <resources>
-    <string name="app_name">Outlet</string>
+    <string name="app_name">DeStore</string>
     <string name="retry">RETRY</string>
+    <string name="search">Search</string>
+    <string name="add_to_cart">Add to cart</string>
+    <string name="good_morning">Good morning 👋🏽</string>
+    <string name="good_afternoon">Good afternoon 👋🏽</string>
+    <string name="good_evening">Good evening 👋🏽</string>
+    <string name="good_night">Good night 👋🏽</string>
+    <string name="our_special_offers">Our Special Offers</string>
+    <string name="featured">Featured Sneakers</string>
+    <string name="back">Back</string>
+    <string name="added_to_cart">\'%1$s\' added to cart</string>
+    <string name="favorite">Add to favorite</string>
+    <string name="unfavorite">Remove from favorite</string>
+    <string name="more_from">More from %1$s</string>
 </resources>

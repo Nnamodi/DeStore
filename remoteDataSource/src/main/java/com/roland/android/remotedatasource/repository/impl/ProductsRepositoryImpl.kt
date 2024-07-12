@@ -1,9 +1,10 @@
 package com.roland.android.remotedatasource.repository.impl
 
 import com.roland.android.remotedatasource.BuildConfig
-import com.roland.android.remotedatasource.network.model.Item
 import com.roland.android.remotedatasource.network.service.ProductsService
 import com.roland.android.remotedatasource.repository.ProductsRepository
+import com.roland.android.remotedatasource.usecase.data.Item
+import com.roland.android.remotedatasource.utils.Converters.convertToList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
@@ -23,7 +24,7 @@ class ProductsRepositoryImpl : ProductsRepository, KoinComponent {
 				apiKey = BuildConfig.API_KEY
 			)
 		)
-	}.map { it.items }
+	}.map { convertToList(it).items }
 		.catch { throw it }
 
 }

@@ -1,6 +1,6 @@
 package com.roland.android.remotedatasource.di
 
-import com.roland.android.remotedatasource.Constant.TIMBU_BASE_URL
+import com.roland.android.remotedatasource.utils.Constant.TIMBU_BASE_URL
 import com.roland.android.remotedatasource.network.service.ProductsService
 import com.roland.android.remotedatasource.repository.ProductsRepository
 import com.roland.android.remotedatasource.repository.impl.ProductsRepositoryImpl

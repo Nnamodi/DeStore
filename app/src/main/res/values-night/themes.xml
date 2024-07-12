@@ -1,5 +1,5 @@
 <resources>
-    <style name="Theme.Outlet" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="Theme.DeStore" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">#000000</item>
     </style>
 </resources>

@@ -1,6 +1,6 @@
 package com.roland.android.remotedatasource.usecase
 
-import com.roland.android.remotedatasource.network.model.Item
+import com.roland.android.remotedatasource.network.model.ItemModel
 import com.roland.android.remotedatasource.repository.ProductsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -19,6 +19,6 @@ class GetProductsUseCase : UseCase<GetProductsUseCase.Request, GetProductsUseCas
 
 	object Request : UseCase.Request
 
-	data class Response(val data: List<Item>) : UseCase.Response
+	data class Response(val data: List<ItemModel>) : UseCase.Response
 
 }

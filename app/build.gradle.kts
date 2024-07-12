@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-	namespace = "com.roland.android.outlet"
+	namespace = "com.roland.android.destore"
 	compileSdk = 34
 
 	defaultConfig {
-		applicationId = "com.roland.android.outlet"
+		applicationId = "com.roland.android.destore"
 		minSdk = 24
 		targetSdk = 34
 		versionCode = 1

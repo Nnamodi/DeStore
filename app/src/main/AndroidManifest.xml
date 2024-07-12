@@ -3,17 +3,17 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
-        android:name=".OutletApp"
+        android:name="com.roland.android.destore.DeStoreApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/launch_icon"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Outlet"
+        android:theme="@style/Theme.DeStore"
         tools:targetApi="31">
         <activity
-            android:name=".ui.MainActivity"
+            android:name="com.roland.android.destore.ui.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

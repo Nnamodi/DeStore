@@ -1,6 +1,7 @@
 package com.roland.android.remotedatasource
 
 import com.roland.android.remotedatasource.usecase.UseCase
+import com.roland.android.remotedatasource.utils.State
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -30,7 +31,7 @@ class UseCaseTest {
 	@Test
 	fun testExecuteSuccess() = runTest {
 		val result = useCase.execute(request).first()
-		assertEquals(Result.Success(response), result)
+		assertEquals(State.Success(response), result)
 	}
 
 }

@@ -1,5 +1,5 @@
-# Outlet
-This sample shopping app is a task from HNG11 stage 2.
+# DeStore
+This sample shopping app is a task from HNG11 stage 3.
 
 ## Screenshots
 |::::::::::::::::::::::::::::::::::::::::|
@@ -28,14 +28,14 @@ This sample shopping app is a task from HNG11 stage 2.
 
   ***Or you can install the apk from below 👇🏽***
 
-  [![Outlet App](https://img.shields.io/badge/Outlet-APK-blue.svg?style=for-the-badge&logo=android)](https://github.com/Nnamodi/Outlet/releases/download/v1.0/app-release.apk)
+  [![DeStore App](https://img.shields.io/badge/DeStore-APK-blue.svg?style=for-the-badge&logo=android)](https://github.com/Nnamodi/DeStore/releases/download/v1.0/app-release.apk)
 
 ## Build Instructions
 You can build the app via Android Studio, or by running the following command in your directory:
 
     ./gradlew <assembleDebug | assembleRelease>
 
-   You can then find the apk file in `Outlet/app/build/outputs/apk`
+   You can then find the apk file in `DeStore/app/build/outputs/apk`
 
 ## Developed with
 * [Jetpack Compose](https://developer.android.com/jetpack/compose) - Jetpack Compose is Android’s recommended modern toolkit for building native UI.
