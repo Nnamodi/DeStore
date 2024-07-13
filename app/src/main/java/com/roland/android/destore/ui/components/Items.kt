@@ -11,15 +11,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.FavoriteBorder
-import androidx.compose.material.icons.rounded.ShoppingBag
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -31,7 +24,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -40,9 +32,7 @@ import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
 import coil.compose.AsyncImagePainter.State.Empty
 import coil.request.ImageRequest
-import com.roland.android.destore.ui.theme.SkyBlue
 import com.roland.android.destore.utils.painterPlaceholder
-import com.roland.android.outlet.R
 import com.roland.android.remotedatasource.usecase.data.Item
 import com.roland.android.remotedatasource.utils.Constant.BASE_IMAGE_URL
 
@@ -52,6 +42,7 @@ fun Product(
 	item: Item,
 	modifier: Modifier = Modifier,
 	favoriteItems: List<Item>,
+	showOriginalPrice: Boolean,
 	favorite: (Item) -> Unit,
 	addToCart: (Item) -> Unit,
 	onItemClick: (String) -> Unit
@@ -97,56 +88,20 @@ fun Product(
 					modifier = Modifier.padding(start = 10.dp, bottom = 20.dp),
 					color = Color.Blue
 				)
-				val originalPrice =
-					((12 / item.currentPrice.toInt()) * 100 + item.currentPrice.toInt())
-				Text(
-					text = "€$originalPrice",
-					modifier = Modifier
-						.padding(start = 10.dp, bottom = 20.dp)
-						.alpha(0.7f),
-					textDecoration = TextDecoration.LineThrough
-				)
+				if (showOriginalPrice) {
+					val originalPrice = ((12 / item.currentPrice.toInt()) * 100 + item.currentPrice.toInt())
+					Text(
+						text = "€$originalPrice",
+						modifier = Modifier
+							.padding(start = 10.dp, bottom = 20.dp)
+							.alpha(0.7f),
+						textDecoration = TextDecoration.LineThrough
+					)
+				}
 			}
 			Spacer(Modifier.weight(1f))
 			AddToCartIconButton { addToCart(item) }
 		}
-	}
-}
-
-@Composable
-fun FavoriteIconButton(
-	itemIsFavorite: Boolean,
-	favorite: () -> Unit
-) {
-	IconButton(
-		onClick = favorite,
-		colors = IconButtonDefaults.iconButtonColors(
-			containerColor = if (itemIsFavorite) Color.Red else Color.Transparent,
-			contentColor = if (itemIsFavorite) Color.White else Color.Transparent
-		)
-	) {
-		Icon(
-			imageVector = Icons.Rounded.FavoriteBorder,
-			contentDescription = stringResource(if (itemIsFavorite) R.string.favorite else R.string.unfavorite),
-			tint = Color.Transparent,
-		)
-	}
-}
-
-@Composable
-private fun AddToCartIconButton(
-	addToCart: () -> Unit
-) {
-	Surface(
-		onClick = addToCart,
-		shape = RoundedCornerShape(6.dp),
-		color = SkyBlue.copy(alpha = 0.4f)
-	) {
-		Icon(
-			imageVector = Icons.Rounded.ShoppingBag,
-			contentDescription = stringResource(R.string.add_to_cart),
-			tint = SkyBlue
-		)
 	}
 }
 
@@ -159,7 +114,7 @@ fun SmallPoster(
 	Poster(
 		url = url,
 		contentDescription = contentDescription,
-		modifier = modifier
+		modifier = modifier.size(100.dp, 120.dp)
 	)
 }
 

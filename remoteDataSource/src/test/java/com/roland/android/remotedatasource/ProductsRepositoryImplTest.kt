@@ -1,7 +1,7 @@
 package com.roland.android.remotedatasource
 
-import com.roland.android.remotedatasource.network.model.ItemModel
 import com.roland.android.remotedatasource.repository.impl.ProductsRepositoryImpl
+import com.roland.android.remotedatasource.usecase.data.Item
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
@@ -16,10 +16,10 @@ class ProductsRepositoryImplTest {
 
 	@Test
 	fun testFetchItems() = runTest {
-		whenever(productsRepository.fetchItems()).thenReturn(flowOf(listOf(ItemModel())))
+		whenever(productsRepository.fetchItems()).thenReturn(flowOf(listOf(Item())))
 
 		val products = productsRepository.fetchItems().first()
-		assertEquals(products, listOf(ItemModel()))
+		assertEquals(products, listOf(Item()))
 	}
 
 }

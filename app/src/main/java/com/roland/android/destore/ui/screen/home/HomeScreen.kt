@@ -29,10 +29,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult.ActionPerformed
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -45,18 +43,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.roland.android.destore.R
 import com.roland.android.destore.ui.components.HomeAppBar
 import com.roland.android.destore.ui.components.LargePoster
 import com.roland.android.destore.ui.components.VerticalGrid
+import com.roland.android.destore.ui.navigation.Screens
 import com.roland.android.destore.ui.screen.CommonScreen
 import com.roland.android.destore.ui.screen.LoadingScreen
 import com.roland.android.destore.ui.theme.Brown
 import com.roland.android.destore.ui.theme.DeStoreTheme
 import com.roland.android.destore.ui.theme.SkyBlue
 import com.roland.android.destore.utils.Extensions.greetings
-import com.roland.android.outlet.R
 import com.roland.android.remotedatasource.usecase.data.Item
-import com.roland.android.remotedatasource.utils.Constant.errorMessage
 import com.roland.android.remotedatasource.utils.State
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
@@ -65,7 +63,7 @@ import kotlin.math.absoluteValue
 fun HomeScreen(
 	uiState: HomeUiState,
 	actions: (HomeActions) -> Unit,
-	navigate: () -> Unit
+	navigate: (Screens) -> Unit
 ) {
 	val snackbarHostState = remember { SnackbarHostState() }
 	val scope = rememberCoroutineScope()
@@ -80,7 +78,8 @@ fun HomeScreen(
 			loadingScreen = { errorMessage ->
 				LoadingScreen(
 					isLoading = errorMessage == null,
-					paddingValues = paddingValues
+					paddingValues = paddingValues,
+					retry = { actions(HomeActions.Reload) }
 				)
 			}
 		) { data ->
@@ -106,11 +105,12 @@ fun HomeScreen(
 											context.getString(
 												R.string.added_to_cart,
 												it.name
-											))
+											)
+										)
 									}
 									actions(HomeActions.AddToCart(it))
 								},
-								onItemClick = { navigate() }
+								onItemClick = { navigate(Screens.DetailsScreen(it)) }
 							)
 						}
 
@@ -122,35 +122,36 @@ fun HomeScreen(
 				}
 
 				item {
-					CategoryList()
+					CategoryList { id, name ->
+						navigate(Screens.ListScreen(id, name))
+					}
 				}
 
 				item {
 					VerticalGrid(
 						header = stringResource(R.string.our_special_offers),
-						items = data.specialOffers
+						items = data.specialOffers,
+						favoriteItems = uiState.favoriteItems,
+						showOriginalPrice = true,
+						snackbarHostState = snackbarHostState,
+						onFavorite = { actions(HomeActions.Favorite(it, !it.isFavorite(uiState.favoriteItems))) },
+						addToCart = { actions(HomeActions.AddToCart(it)) },
+						onItemClick = { navigate(Screens.DetailsScreen(it)) }
 					)
 				}
 
 				item {
 					VerticalGrid(
 						header = stringResource(R.string.featured),
-						items = data.featured
+						items = data.featured,
+						favoriteItems = uiState.favoriteItems,
+						snackbarHostState = snackbarHostState,
+						onFavorite = { actions(HomeActions.Favorite(it, !it.isFavorite(uiState.favoriteItems))) },
+						addToCart = { actions(HomeActions.AddToCart(it)) },
+						onItemClick = { navigate(Screens.DetailsScreen(it)) }
 					)
 				}
 			}
-		}
-	}
-
-	// shows error snackbar
-	LaunchedEffect(uiState.data) {
-		if (uiState.data !is State.Error) return@LaunchedEffect
-		scope.launch {
-			val result = snackbarHostState.showSnackbar(
-				message = uiState.data.throwable.errorMessage(context),
-				actionLabel = context.getString(R.string.retry)
-			)
-			if (result == ActionPerformed) actions(HomeActions.Reload)
 		}
 	}
 }
@@ -171,7 +172,7 @@ private fun UserInfo(
 		}
 		Column {
 			Text(
-				text = greetings(LocalContext.current),
+				text = LocalContext.current.greetings(),
 				style = MaterialTheme.typography.labelLarge
 			)
 			Text(text = userName)
@@ -230,7 +231,8 @@ private fun PagerItems(
 
 @Composable
 fun CategoryList(
-	modifier: Modifier = Modifier
+	modifier: Modifier = Modifier,
+	navigate: (String, String) -> Unit
 ) {
 }
 

@@ -2,6 +2,10 @@ package com.roland.android.destore
 
 import android.app.Application
 import com.roland.android.destore.ui.screen.ProductsViewModel
+import com.roland.android.destore.ui.screen.cart.CartViewModel
+import com.roland.android.destore.ui.screen.details.DetailsViewModel
+import com.roland.android.destore.ui.screen.home.HomeViewModel
+import com.roland.android.destore.ui.screen.list.ListViewModel
 import com.roland.android.remotedatasource.di.NetworkModule.remoteDataModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -24,5 +28,8 @@ class DeStoreApp : Application() {
 }
 
 private val appModule = module {
-	viewModel { ProductsViewModel() }
+	viewModel { HomeViewModel() }
+	viewModel { DetailsViewModel() }
+	viewModel { ListViewModel() }
+	viewModel { CartViewModel() }
 }

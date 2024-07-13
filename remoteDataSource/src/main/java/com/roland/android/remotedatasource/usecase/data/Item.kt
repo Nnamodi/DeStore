@@ -19,9 +19,9 @@ data class Item(
 data class CartItem(
 	val id: String = "",
 	val name: String = "",
-	val photos: List<Image> = emptyList(),
+	val photo: Image = Image(),
 	val currentPrice: String = "",
-	val color: Int = 0,
+	val color: Long = 0,
 	var size: Int = 0,
 	var numberInCart: Int = 0
 )

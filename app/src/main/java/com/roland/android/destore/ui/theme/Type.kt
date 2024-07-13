@@ -6,7 +6,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.roland.android.outlet.R
+import com.roland.android.destore.R
 
 private val Roboto = FontFamily(
 	Font(R.font.roboto_light, FontWeight.Light),

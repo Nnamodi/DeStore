@@ -5,7 +5,8 @@ import com.roland.android.remotedatasource.utils.State
 
 data class HomeUiState(
 	val data: State<HomeDataModel>? = null,
-	val userInfo: String = "Nnamdi Igede"
+	val userInfo: String = "Nnamdi Igede",
+	val favoriteItems: List<Item> = emptyList(),
 )
 
 data class HomeDataModel(

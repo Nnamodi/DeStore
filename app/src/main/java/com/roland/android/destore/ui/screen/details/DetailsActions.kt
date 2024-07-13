@@ -4,7 +4,13 @@ import com.roland.android.remotedatasource.usecase.data.Item
 
 sealed class DetailsActions {
 
-	data class AddToCart(val item: Item) : DetailsActions()
+	data class AddToCart(
+		val item: Item,
+		val color: Long,
+		val size: Int
+	) : DetailsActions()
+
+	data class RemoveFromCart(val item: Item) : DetailsActions()
 
 	data class Favorite(
 		val item: Item,
@@ -12,5 +18,7 @@ sealed class DetailsActions {
 	) : DetailsActions()
 
 	data object Reload : DetailsActions()
+
+	data object ReloadCategoryList : DetailsActions()
 
 }

@@ -16,10 +16,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import com.roland.android.outlet.R
+import com.roland.android.destore.R
+import com.roland.android.destore.ui.navigation.Screens
 
 @Composable
-fun HomeAppBar(navigate: () -> Unit) {
+fun HomeAppBar(navigate: (Screens) -> Unit) {
 	TopAppBar(
 		title = {
 			Text(
@@ -28,7 +29,7 @@ fun HomeAppBar(navigate: () -> Unit) {
 			)
 		},
 		actions = {
-			IconButton(onClick = navigate) {
+			IconButton(onClick = { navigate(Screens.SearchScreen) }) {
 				Icon(Icons.Rounded.Search, stringResource(R.string.search))
 			}
 		}
@@ -36,14 +37,12 @@ fun HomeAppBar(navigate: () -> Unit) {
 }
 
 @Composable
-fun DetailsAppBar(
-	navigate: () -> Unit
-) {
+fun DetailsAppBar(navigate: (Screens) -> Unit) {
 	TopAppBar(
 		title = {},
 		navigationIcon = {
 			IconButton(
-				onClick = navigate,
+				onClick = { navigate(Screens.Back) },
 				colors = IconButtonDefaults.iconButtonColors(Color.White, Color.Black)
 			) {
 				Icon(Icons.AutoMirrored.Rounded.ArrowBack, stringResource(R.string.back))
@@ -55,20 +54,18 @@ fun DetailsAppBar(
 
 @Composable
 fun TopAppBar(
-	title: String?,
-	navigate: () -> Unit
+	title: String,
+	navigate: (Screens) -> Unit
 ) {
 	TopAppBar(
 		title = {
-			title?.let {
-				Text(
-					text = it,
-					fontWeight = FontWeight.Bold
-				)
-			}
+			Text(
+				text = title,
+				fontWeight = FontWeight.Bold
+			)
 		},
 		navigationIcon = {
-			IconButton(onClick = navigate) {
+			IconButton(onClick = { navigate(Screens.Back) }) {
 				Icon(Icons.AutoMirrored.Rounded.ArrowBack, stringResource(R.string.back))
 			}
 		}

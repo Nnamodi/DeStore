@@ -13,6 +13,7 @@ koinBom = "3.6.0-wasm-alpha2"
 lifecycleRuntimeKtx = "2.8.3"
 material3 = "1.2.1"
 moshi = "1.15.0"
+navigation = "2.7.7"
 okHttp = "4.11.0"
 retrofit = "2.9.0"
 
@@ -35,6 +36,7 @@ androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
+compose-navigation = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
 koin-android = { module = "io.insert-koin:koin-android" }
 koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koinBom" }
 koin-core = { module = "io.insert-koin:koin-core" }

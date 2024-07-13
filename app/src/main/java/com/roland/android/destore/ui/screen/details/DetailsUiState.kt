@@ -5,12 +5,10 @@ import com.roland.android.remotedatasource.usecase.data.ItemDetails
 import com.roland.android.remotedatasource.utils.State
 
 data class DetailsUiState(
-	val data: State<DetailsDataModel>? = null,
+	val details: State<ItemDetails>? = null,
+	val moreInStore: State<List<Item>>? = null,
+	val category: String = "",
 	val favorited: Boolean = false,
-	val numberInCart: Int = 0
-)
-
-data class DetailsDataModel(
-	val details: ItemDetails,
-	val moreInStore: List<Item>
+	val numberInCart: Int = 0,
+	val favoriteItems: List<Item> = emptyList()
 )

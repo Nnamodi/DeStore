@@ -4,8 +4,13 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.roland.android.destore.ui.screen.ProductsScreen
-import com.roland.android.destore.ui.screen.ProductsViewModel
+import androidx.navigation.compose.rememberNavController
+import com.roland.android.destore.ui.navigation.AppRoute
+import com.roland.android.destore.ui.navigation.NavActions
+import com.roland.android.destore.ui.screen.cart.CartViewModel
+import com.roland.android.destore.ui.screen.details.DetailsViewModel
+import com.roland.android.destore.ui.screen.home.HomeViewModel
+import com.roland.android.destore.ui.screen.list.ListViewModel
 import com.roland.android.destore.ui.theme.DeStoreTheme
 import org.koin.android.ext.android.inject
 
@@ -14,12 +19,20 @@ class MainActivity : ComponentActivity() {
 		super.onCreate(savedInstanceState)
 		enableEdgeToEdge()
 		setContent {
-			val viewModel: ProductsViewModel by inject()
+			val navController = rememberNavController()
+			val homeViewModel: HomeViewModel by inject()
+			val detailsViewModel: DetailsViewModel by inject()
+			val listViewModel: ListViewModel by inject()
+			val cartViewModel: CartViewModel by inject()
 
 			DeStoreTheme {
-				ProductsScreen(
-					data = viewModel.data,
-					retry = viewModel::retry
+				AppRoute(
+					navActions = NavActions(navController),
+					navController = navController,
+					homeViewModel = homeViewModel,
+					detailsViewModel = detailsViewModel,
+					listViewModel = listViewModel,
+					cartViewModel = cartViewModel
 				)
 			}
 		}

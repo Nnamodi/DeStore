@@ -65,6 +65,7 @@ dependencies {
 	implementation(libs.androidx.material.icons)
 	implementation(libs.androidx.material3)
 	implementation(libs.coil.compose)
+	implementation(libs.compose.navigation)
 
 	// di
 	implementation(platform(libs.koin.bom))

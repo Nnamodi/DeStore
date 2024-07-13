@@ -13,17 +13,23 @@ val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
 val Brown = Color(0xFFE89705)
-val SkyBlue = Color(0xFF0072C6)
+val Purple = Color(0xFF9747FF)
+val Green = Color(0xFF09C53B)
+val SkyBlue = Color(0xFF0266B8)
+val Yellow = Color(0xFFFFCD00)
+val Red = Color(0xFFEC064F)
+val Black = Color(0xFF141B34)
+val Grey = Color(0xFFEAEAEA)
 
 
 val LightColorScheme = lightColorScheme(
-	primary = Purple40,
-	secondary = PurpleGrey40,
-	tertiary = Pink40
+	primary = SkyBlue,
+	secondary = SkyBlue,
+	tertiary = SkyBlue
 )
 
 val DarkColorScheme = darkColorScheme(
-	primary = Purple80,
-	secondary = PurpleGrey80,
-	tertiary = Pink80
+	primary = Black,
+	secondary = Black,
+	tertiary = Black
 )
