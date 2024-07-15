@@ -19,12 +19,12 @@ internal object Converters {
 		imageModel.url
 	)
 
-	fun convertToItem(itemModel: ItemModel) = Item(
+	private fun convertToItem(itemModel: ItemModel) = Item(
 		itemModel.id,
 		itemModel.name,
 		itemModel.photos.map { convertToImage(it) },
-		itemModel.currentPrice.map { convertToPrice(it) }
-			.firstOrNull()?.toString() ?: itemModel.price
+		itemModel.price,
+		itemModel.categories.map { convertToCategory(it) }.firstOrNull() ?: Category(name = "Generic")
 	)
 
 	fun convertToItemDetails(itemDetailsModel: ItemDetailsModel) = ItemDetails(
@@ -34,6 +34,7 @@ internal object Converters {
 		itemDetailsModel.photos.map { convertToImage(it) },
 		itemDetailsModel.currentPrice,
 		itemDetailsModel.categories.map { convertToCategory(it) }
+			.takeIf { it.isNotEmpty() } ?: listOf(Category(name = "Generic"))
 	)
 
 	fun convertToList(listModel: ListModel) = List(

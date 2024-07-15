@@ -4,7 +4,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.material3.Scaffold
 import androidx.navigation.compose.rememberNavController
+import com.roland.android.destore.ui.components.NavBar
 import com.roland.android.destore.ui.navigation.AppRoute
 import com.roland.android.destore.ui.navigation.NavActions
 import com.roland.android.destore.ui.screen.cart.CartViewModel
@@ -26,14 +28,17 @@ class MainActivity : ComponentActivity() {
 			val cartViewModel: CartViewModel by inject()
 
 			DeStoreTheme {
-				AppRoute(
-					navActions = NavActions(navController),
-					navController = navController,
-					homeViewModel = homeViewModel,
-					detailsViewModel = detailsViewModel,
-					listViewModel = listViewModel,
-					cartViewModel = cartViewModel
-				)
+				Scaffold(bottomBar = { NavBar(navController) }) { paddingValues ->
+					AppRoute(
+						navActions = NavActions(navController),
+						navController = navController,
+						paddingValues = paddingValues,
+						homeViewModel = homeViewModel,
+						detailsViewModel = detailsViewModel,
+						listViewModel = listViewModel,
+						cartViewModel = cartViewModel
+					)
+				}
 			}
 		}
 	}

@@ -28,14 +28,14 @@ class DetailsViewModel : ViewModel(), KoinComponent {
 
 	private val _detailsUiState = MutableStateFlow(DetailsUiState())
 	var detailsUiState by mutableStateOf(_detailsUiState.value)
-	var cartItems by mutableStateOf<List<CartItem>>(emptyList())
+	private var cartItems by mutableStateOf<List<CartItem>>(emptyList())
 	var favoriteItems by mutableStateOf<List<Item>>(emptyList())
-	var productId by mutableStateOf("")
+	private var productId by mutableStateOf("")
 
 	init {
 		viewModelScope.launch {
-			cartItemsFlow.collect {
-				cartItems = it
+			cartItemsFlow.collect { items ->
+				cartItems = items
 				val numberInCart = cartItems.filter { it.id == productId }.size
 				val favorited = favoriteItems.any { it.id == productId }
 				_detailsUiState.update {
@@ -68,12 +68,12 @@ class DetailsViewModel : ViewModel(), KoinComponent {
 				.collect { data ->
 					_detailsUiState.update { it.copy(details = data) }
 					if (data !is State.Success) return@collect
-					fetchMoreInStore(data.data.categories[0].id)
+					fetchMoreInStore(data.data.categories.firstOrNull()?.id)
 				}
 		}
 	}
 
-	private fun fetchMoreInStore(categoryId: String) {
+	private fun fetchMoreInStore(categoryId: String?) {
 		viewModelScope.launch {
 			getCategoryUseCase.execute(GetCategoryUseCase.Request(categoryId))
 				.map { convertToCategoryData(it) }
@@ -98,13 +98,12 @@ class DetailsViewModel : ViewModel(), KoinComponent {
 		color: Long,
 		size: Int
 	) {
-		val numberInCart = cartItems.filter { it.id == item.id }.size
-		cartItemsFlow.value = cartItems + item.toCartItem(color, size, numberInCart)
+		cartItemsFlow.value = cartItems + item.toCartItem(color, size)
 	}
 
 	private fun removeFromCart(item: Item) {
 		val itemsInCart = cartItems.filter { it.id == item.id }
-		cartItemsFlow.value = cartItems - itemsInCart.random()
+		cartItemsFlow.value = cartItems - itemsInCart.last()
 	}
 
 	private fun favorite(

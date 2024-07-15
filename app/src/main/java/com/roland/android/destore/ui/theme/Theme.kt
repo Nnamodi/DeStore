@@ -16,7 +16,7 @@ import androidx.core.view.WindowCompat
 
 @Composable
 fun DeStoreTheme(
-	darkTheme: Boolean = isSystemInDarkTheme(),
+	darkTheme: Boolean = false, //isSystemInDarkTheme(),
 	dynamicColor: Boolean = true, // on Android 12+
 	content: @Composable () -> Unit
 ) {

@@ -4,8 +4,11 @@ import android.content.Context
 import com.roland.android.destore.R
 import com.roland.android.destore.ui.components.Colors
 import com.roland.android.remotedatasource.usecase.data.CartItem
+import com.roland.android.remotedatasource.usecase.data.Category
 import com.roland.android.remotedatasource.usecase.data.Item
 import com.roland.android.remotedatasource.usecase.data.ItemDetails
+import java.math.BigDecimal
+import java.math.RoundingMode
 import java.util.Calendar
 
 object Extensions {
@@ -20,31 +23,35 @@ object Extensions {
 		}
 	}
 
+	fun Double.round(): Float {
+		return BigDecimal(this)
+			.setScale(2, RoundingMode.HALF_EVEN)
+			.toFloat()
+	}
+
 	fun Long.getColor(): Colors {
 		val color = Colors.entries.find { it.color.value == this.toULong() }
 		return Colors.valueOf(color?.name ?: Colors.ColorBlue.name)
 	}
 
-	fun ItemDetails.toItem() = Item(
+	fun ItemDetails.toItem(price: String) = Item(
 		id = id,
 		name = name,
 		photos = photos,
-		currentPrice = currentPrice,
-		category = categories[0]
+		currentPrice = price,
+		category = categories.firstOrNull() ?: Category(name = "Generic")
 	)
 
 	fun Item.toCartItem(
 		color: Long,
-		size: Int,
-		numberInCart: Int
+		size: Int
 	) = CartItem(
 		id = id,
 		name = name,
 		photo = photos.last(),
 		currentPrice = currentPrice,
 		color = color,
-		size = size,
-		numberInCart = numberInCart
+		size = size
 	)
 
 }

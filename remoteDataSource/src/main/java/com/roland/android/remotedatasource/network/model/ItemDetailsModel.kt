@@ -15,7 +15,7 @@ internal data class ItemDetailsModel(
 	@Json(name = "photos")
 	val photos: List<ImageModel> = emptyList(),
 	@Json(name = "current_price")
-	val currentPrice: String = "",
+	val currentPrice: String? = null,
 	@Json(name = "categories")
 	val categories: List<CategoryModel> = emptyList()
 )

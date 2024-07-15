@@ -1,8 +1,10 @@
 package com.roland.android.destore.ui.components
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,45 +15,51 @@ import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AttachEmail
+import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material.icons.rounded.LocalConvenienceStore
 import androidx.compose.material.icons.rounded.Numbers
 import androidx.compose.material.icons.rounded.PermContactCalendar
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.roland.android.destore.R
+import com.roland.android.destore.data.UserInfo
 import com.roland.android.destore.ui.theme.SkyBlue
 import com.roland.android.destore.utils.Extensions.getColor
+import com.roland.android.destore.utils.Extensions.round
 import com.roland.android.remotedatasource.usecase.data.CartItem
 import com.roland.android.remotedatasource.usecase.data.Item
-import com.roland.android.destore.data.UserInfo
 import kotlinx.coroutines.launch
 
 @Composable
 fun VerticalGrid(
-	header: String,
+	header: String?,
 	items: List<Item>,
 	modifier: Modifier = Modifier,
 	favoriteItems: List<Item>,
@@ -59,17 +67,19 @@ fun VerticalGrid(
 	snackbarHostState: SnackbarHostState,
 	onFavorite: (Item) -> Unit,
 	addToCart: (Item) -> Unit,
-	onItemClick: (String) -> Unit
+	onItemClick: (String, String) -> Unit
 ) {
 	val scope = rememberCoroutineScope()
 	val context = LocalContext.current
 
 	Column {
-		Text(
-			text = header,
-			modifier = modifier.padding(start = 10.dp),
-			style = MaterialTheme.typography.headlineMedium
-		)
+		header?.let {
+			Text(
+				text = it,
+				modifier = modifier.padding(start = 10.dp),
+				style = MaterialTheme.typography.headlineMedium
+			)
+		}
 		LazyVerticalGrid(
 			columns = GridCells.Adaptive(150.dp),
 			modifier = modifier.padding(start = 10.dp)
@@ -78,7 +88,17 @@ fun VerticalGrid(
 				Product(
 					item = items[index],
 					favoriteItems = favoriteItems,
-					favorite = onFavorite,
+					favorite = {
+						scope.launch {
+							snackbarHostState.showSnackbar(
+								context.getString(
+									R.string.added_to_favorite,
+									it.name
+								)
+							)
+						}
+						onFavorite(it)
+					},
 					showOriginalPrice = showOriginalPrice,
 					addToCart = {
 						scope.launch {
@@ -99,6 +119,96 @@ fun VerticalGrid(
 }
 
 @Composable
+fun GroupedVerticalGrid(
+	header: String,
+	gridItems: List<Item>,
+	modifier: Modifier = Modifier,
+	favoriteItems: List<Item>,
+	showOriginalPrice: Boolean = false,
+	numberOfRows: Int,
+	snackbarHostState: SnackbarHostState,
+	onFavorite: (Item) -> Unit,
+	addToCart: (Item) -> Unit,
+	onItemClick: (String, String) -> Unit
+) {
+	val scope = rememberCoroutineScope()
+	val context = LocalContext.current
+	val items = gridItems.take(numberOfRows * 2)
+
+	Column(modifier.padding(start = 10.dp)) {
+		Text(
+			text = header,
+			modifier = Modifier.padding(start = 10.dp, top = 10.dp, bottom = 6.dp),
+			fontWeight = FontWeight.Bold,
+			style = MaterialTheme.typography.headlineSmall
+		)
+		repeat(numberOfRows) { index ->
+			Row(Modifier.fillMaxWidth()) {
+				Product(
+					item = items[index],
+					modifier = Modifier.weight(1f),
+					favoriteItems = favoriteItems,
+					favorite = {
+						scope.launch {
+							snackbarHostState.showSnackbar(
+								context.getString(
+									R.string.added_to_favorite,
+									it.name
+								)
+							)
+						}
+						onFavorite(it)
+				    },
+					showOriginalPrice = showOriginalPrice,
+					addToCart = {
+						scope.launch {
+							snackbarHostState.showSnackbar(
+								context.getString(
+									R.string.added_to_cart,
+									it.name
+								)
+							)
+						}
+						addToCart(it)
+					},
+					onItemClick = onItemClick
+				)
+				Product(
+					item = items[index + 1],
+					modifier = Modifier.weight(1f),
+					favoriteItems = favoriteItems,
+					favorite = {
+						scope.launch {
+							snackbarHostState.showSnackbar(
+								context.getString(
+									R.string.added_to_favorite,
+									it.name
+								)
+							)
+						}
+						onFavorite(it)
+					},
+					showOriginalPrice = showOriginalPrice,
+					addToCart = {
+						scope.launch {
+							snackbarHostState.showSnackbar(
+								context.getString(
+									R.string.added_to_cart,
+									it.name
+								)
+							)
+						}
+						addToCart(it)
+					},
+					onItemClick = onItemClick
+				)
+			}
+		}
+	}
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
 fun CartItems(
 	cartItems: List<CartItem>,
 	modifier: Modifier = Modifier,
@@ -107,14 +217,15 @@ fun CartItems(
 	userInfo: UserInfo = UserInfo(),
 	add: (CartItem) -> Unit = {},
 	remove: (CartItem) -> Unit = {},
-	removeFromCart: (CartItem) -> Unit = {}
+	removeFromCart: (CartItem) -> Unit = {},
+	backToCart: () -> Unit = {},
+	viewDetails: (String, String) -> Unit = { _, _ ->}
 ) {
 	val layoutDirection = LocalLayoutDirection.current
+	val items = cartItems.toSet().toList()
 
 	LazyColumn(
-		modifier = modifier
-			.fillMaxSize()
-			.padding(16.dp),
+		modifier = modifier.fillMaxSize(),
 		contentPadding = PaddingValues(
 			start = paddingValues.calculateStartPadding(layoutDirection),
 			top = paddingValues.calculateTopPadding(),
@@ -126,17 +237,23 @@ fun CartItems(
 			if (inCheckoutScreen) {
 				SmallHeader(
 					header = stringResource(R.string.order_list),
-					onButtonClick = {}
+					modifier = Modifier.padding(16.dp),
+					onButtonClick = backToCart
 				)
 			}
 		}
-		items(cartItems.size) { index ->
+		items(items.size) { index ->
+			val item = items[index]
+
 			CartItem(
-				item = cartItems[index],
+				item = item,
+				modifier = Modifier.animateItemPlacement(),
 				inCheckoutScreen = inCheckoutScreen,
+				numberInCart = cartItems.filter { it.id == item.id }.size,
 				add = add,
 				remove = remove,
-				removeFromCart = removeFromCart
+				removeFromCart = removeFromCart,
+				viewDetails = viewDetails
 			)
 		}
 		if (inCheckoutScreen) {
@@ -179,51 +296,85 @@ private fun CartItem(
 	item: CartItem,
 	modifier: Modifier = Modifier,
 	inCheckoutScreen: Boolean,
+	numberInCart: Int,
 	add: (CartItem) -> Unit,
 	remove: (CartItem) -> Unit,
-	removeFromCart: (CartItem) -> Unit
+	removeFromCart: (CartItem) -> Unit,
+	viewDetails: (String, String) -> Unit
 ) {
 	Row(
 		modifier = modifier
 			.fillMaxWidth()
+			.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+			.clip(shapes.extraLarge)
 			.border(
 				width = 2.dp,
-				color = colorScheme.onBackground.copy(alpha = 0.5f),
+				color = colorScheme.onBackground.copy(alpha = 0.2f),
 				shape = shapes.extraLarge
 			)
-			.clip(shapes.extraLarge),
+			.clickable(!inCheckoutScreen) { viewDetails(item.id, item.currentPrice) }
+			.padding(16.dp),
 		verticalAlignment = Alignment.CenterVertically
 	) {
-		SmallPoster(url = item.photo.url, contentDescription = item.name)
-		Column {
-			Text(text = item.name)
+		SmallPoster(
+			url = item.photo.url,
+			contentDescription = item.name,
+			modifier = Modifier.clip(shapes.extraLarge)
+		)
+		Column(Modifier.padding(start = 10.dp)) {
+			Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+				Text(text = item.name)
+				Spacer(Modifier.weight(1f))
+				if (!inCheckoutScreen) {
+					IconButton(onClick = { removeFromCart(item) }) {
+						Icon(
+							Icons.Rounded.Clear,
+							stringResource(R.string.remove_from_cart),
+							Modifier.scale(0.8f)
+						)
+					}
+				}
+			}
 			Row(verticalAlignment = Alignment.CenterVertically) {
 				val colorValue = item.color.getColor()
 
-				ColorBox(colorValue)
+				ColorBox(colorValue, Modifier.padding(top = 4.dp, bottom = 6.dp))
 				Text(
 					text = stringResource(colorValue.nameRes),
-					modifier = Modifier.alpha(0.5f),
-					fontSize = 8.sp
+					modifier = Modifier.alpha(0.9f),
+					fontSize = 12.sp
 				)
-				VerticalDivider(Modifier.padding(horizontal = 4.dp, vertical = 2.dp))
+				Box(
+					modifier = Modifier
+						.padding(horizontal = 6.dp, vertical = 2.dp)
+						.size(2.dp, 8.dp)
+						.background(colorScheme.onBackground.copy(alpha = 0.5f))
+				)
 				Text(stringResource(R.string.size))
 				Text(
 					text = item.size.toString(),
 					modifier = Modifier
 						.padding(start = 2.dp)
-						.background(colorScheme.onBackground.copy(alpha = 0.1f))
-						.padding(2.dp)
 						.clip(shape = shapes.extraSmall)
+						.background(colorScheme.onBackground.copy(alpha = 0.1f))
+						.padding(4.dp, 2.dp)
 				)
 			}
 			Row(verticalAlignment = Alignment.CenterVertically) {
 				QuantityButton(
-					itemSize = item.numberInCart.toString(),
+					itemSize = numberInCart.toString(),
 					inCheckoutScreen = inCheckoutScreen,
 					add = { add(item) },
 					remove = { remove(item) }
 				)
+				if (inCheckoutScreen) {
+					Box(
+						modifier = Modifier
+							.padding(horizontal = 6.dp, vertical = 2.dp)
+							.size(2.dp, 8.dp)
+							.background(colorScheme.onBackground.copy(alpha = 0.5f))
+					)
+				}
 				Text("€" + item.currentPrice, Modifier.padding(start = 4.dp))
 			}
 		}
@@ -238,14 +389,15 @@ private fun SmallHeader(
 	onButtonClick: () -> Unit = {}
 ) {
 	Row(modifier.fillMaxWidth()) {
-		Text(text = header, fontSize = 15.sp)
+		Text(text = header, fontSize = 15.sp, fontWeight = FontWeight.Bold)
 		Spacer(Modifier.weight(1f))
 		if (showButton) {
 			Text(
 				text = stringResource(R.string.edit),
 				modifier = Modifier.clickable { onButtonClick() },
 				color = SkyBlue,
-				fontSize = 15.sp
+				fontSize = 15.sp,
+				fontWeight = FontWeight.Bold
 			)
 		}
 	}
@@ -256,22 +408,30 @@ fun Container(
 	header: String,
 	modifier: Modifier = Modifier,
 	showNavigateButton: Boolean = true,
+	backgroundColor: Color = SkyBlue.copy(alpha = 0.3f),
 	navigate: () -> Unit = {},
 	content: @Composable ColumnScope.() -> Unit
 ) {
 	Column(
-		modifier = modifier
+		Modifier
 			.fillMaxWidth()
-			.clip(shapes.large)
-			.background(SkyBlue.copy(alpha = 0.3f))
 			.padding(16.dp)
 	) {
 		SmallHeader(
 			header = header,
+			modifier = Modifier.padding(bottom = 4.dp),
 			showButton = showNavigateButton,
 			onButtonClick = navigate
 		)
-		content()
+		Column(
+			modifier = modifier
+				.fillMaxWidth()
+				.clip(shapes.large)
+				.background(backgroundColor)
+				.padding(12.dp)
+		) {
+			content()
+		}
 	}
 }
 
@@ -280,10 +440,10 @@ private fun OrderDetails(
 	cartItems: List<CartItem>,
 	modifier: Modifier = Modifier
 ) {
-	val subTotal = cartItems.sumOf { it.currentPrice.toInt() }
-	val deliveryFee = ((5 / 100.0) * subTotal).toFloat()
-	val discount = ((3 / 100.0) * subTotal).toFloat()
-	val total = subTotal + deliveryFee - discount
+	val subTotal = cartItems.sumOf { it.currentPrice.toDouble() }.round()
+	val deliveryFee = ((5 / 100.0) * subTotal).round()
+	val discount = ((3 / 100.0) * subTotal).round()
+	val total = (subTotal + deliveryFee - discount).toDouble().round()
 
 	Container(
 		header = stringResource(R.string.price_summary),
@@ -298,27 +458,24 @@ private fun OrderDetails(
 				Text(stringResource(R.string.discount), Modifier.alpha(0.7f))
 			}
 			Column {
-				Row {
-					Text("€", Modifier.padding(end = 10.dp))
-					Text("$subTotal")
-				}
-				Row {
-					Text("€", Modifier.weight(1f))
-					Text("$deliveryFee")
-				}
-				Row {
-					Text("€", Modifier.weight(1f))
-					Text("$discount")
-				}
+				repeat(3) { Text("€") }
+			}
+			Column(horizontalAlignment = Alignment.End) {
+				Text("$subTotal", Modifier.padding(start = 10.dp))
+				Text("$deliveryFee")
+				Text("$discount")
 			}
 		}
 		HorizontalDivider(Modifier.padding(vertical = 20.dp))
 		Row(Modifier.fillMaxWidth()) {
-			Text(stringResource(R.string.total), Modifier.alpha(0.7f))
-			Row {
-				Text("€", Modifier.padding(end = 10.dp))
-				Text("$total")
-			}
+			Text(
+				text = stringResource(R.string.total),
+				modifier = Modifier
+					.alpha(0.7f)
+					.weight(1f)
+			)
+			Text("€", Modifier.padding(end = 10.dp))
+			Text("$total")
 		}
 	}
 }
@@ -332,24 +489,36 @@ fun QuantityButton(
 ) {
 	Row(
 		modifier = Modifier
+			.clip(shape = shapes.medium)
 			.background(colorScheme.onBackground.copy(alpha = 0.1f))
-			.padding(horizontal = 6.dp, vertical = 2.dp),
+			.padding(horizontal = if (inCheckoutScreen) 0.dp else 6.dp),
 		verticalAlignment = Alignment.CenterVertically
 	) {
-		Text(
-			text = if (inCheckoutScreen) stringResource(R.string.quantity) else "-",
-			modifier = Modifier.clickable(!inCheckoutScreen) { remove() }
-		)
+		if (!inCheckoutScreen) {
+			Text(
+				text = "-",
+				modifier = Modifier
+					.clickable { remove() }
+					.padding(horizontal = 4.dp),
+				fontSize = 16.sp
+			)
+		}
 		Text(
 			text = itemSize,
 			modifier = Modifier
-				.padding(4.dp)
+				.padding(if (inCheckoutScreen) 0.dp else 4.dp)
+				.clip(shape = shapes.medium)
 				.background(colorScheme.onBackground.copy(alpha = 0.1f))
-				.padding(4.dp)
-				.clip(shape = shapes.extraSmall)
+				.padding(8.dp, 4.dp)
 		)
 		if (!inCheckoutScreen) {
-			Text("+", Modifier.clickable { add() })
+			Text(
+				text = "+",
+				modifier = Modifier
+					.clickable { add() }
+					.padding(horizontal = 4.dp),
+				fontSize = 16.sp
+			)
 		}
 	}
 }
@@ -368,10 +537,12 @@ private fun Label(
 			Icon(
 				imageVector = icon,
 				contentDescription = label,
-				modifier = Modifier.padding(end = 8.dp),
+				modifier = Modifier
+					.padding(end = 6.dp)
+					.scale(0.7f),
 				tint = colorScheme.primary
 			)
 		}
-		Text(text = label, fontSize = 12.sp)
+		Text(text = label, fontSize = 13.sp)
 	}
 }

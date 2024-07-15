@@ -8,8 +8,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -35,23 +38,29 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.roland.android.destore.R
+import com.roland.android.destore.ui.components.GroupedVerticalGrid
 import com.roland.android.destore.ui.components.HomeAppBar
-import com.roland.android.destore.ui.components.LargePoster
-import com.roland.android.destore.ui.components.VerticalGrid
+import com.roland.android.destore.ui.components.SmallPoster
 import com.roland.android.destore.ui.navigation.Screens
 import com.roland.android.destore.ui.screen.CommonScreen
 import com.roland.android.destore.ui.screen.LoadingScreen
+import com.roland.android.destore.ui.theme.Black
 import com.roland.android.destore.ui.theme.Brown
 import com.roland.android.destore.ui.theme.DeStoreTheme
+import com.roland.android.destore.ui.theme.Purple
+import com.roland.android.destore.ui.theme.Red
 import com.roland.android.destore.ui.theme.SkyBlue
 import com.roland.android.destore.utils.Extensions.greetings
 import com.roland.android.remotedatasource.usecase.data.Item
@@ -68,6 +77,7 @@ fun HomeScreen(
 	val snackbarHostState = remember { SnackbarHostState() }
 	val scope = rememberCoroutineScope()
 	val context = LocalContext.current
+	val layoutDirection = LocalLayoutDirection.current
 
 	Scaffold(
 		topBar = { HomeAppBar(navigate) },
@@ -77,13 +87,19 @@ fun HomeScreen(
 			state = uiState.data,
 			loadingScreen = { errorMessage ->
 				LoadingScreen(
-					isLoading = errorMessage == null,
+					errorMessage = errorMessage,
+					modifier = Modifier.fillMaxSize(),
 					paddingValues = paddingValues,
 					retry = { actions(HomeActions.Reload) }
 				)
 			}
 		) { data ->
-			LazyColumn(contentPadding = paddingValues) {
+			LazyColumn(contentPadding = PaddingValues(
+				start = paddingValues.calculateStartPadding(layoutDirection),
+				top = paddingValues.calculateTopPadding(),
+				end = paddingValues.calculateEndPadding(layoutDirection),
+				bottom = paddingValues.calculateBottomPadding() + 50.dp
+			)) {
 				item {
 					UserInfo(userName = uiState.userInfo)
 				}
@@ -110,13 +126,15 @@ fun HomeScreen(
 									}
 									actions(HomeActions.AddToCart(it))
 								},
-								onItemClick = { navigate(Screens.DetailsScreen(it)) }
+								onItemClick = { id, price ->
+									navigate(Screens.DetailsScreen(id, price))
+								}
 							)
 						}
 
 						HorizontalPagerIndicator(
 							pagerState = pagerState,
-							modifier = Modifier.padding(bottom = 20.dp)
+							modifier = Modifier.padding(bottom = 30.dp)
 						)
 					}
 				}
@@ -128,27 +146,33 @@ fun HomeScreen(
 				}
 
 				item {
-					VerticalGrid(
+					GroupedVerticalGrid(
 						header = stringResource(R.string.our_special_offers),
-						items = data.specialOffers,
+						gridItems = data.specialOffers,
 						favoriteItems = uiState.favoriteItems,
 						showOriginalPrice = true,
+						numberOfRows = 2,
 						snackbarHostState = snackbarHostState,
 						onFavorite = { actions(HomeActions.Favorite(it, !it.isFavorite(uiState.favoriteItems))) },
 						addToCart = { actions(HomeActions.AddToCart(it)) },
-						onItemClick = { navigate(Screens.DetailsScreen(it)) }
+						onItemClick = { id, price ->
+							navigate(Screens.DetailsScreen(id, price))
+						}
 					)
 				}
 
 				item {
-					VerticalGrid(
+					GroupedVerticalGrid(
 						header = stringResource(R.string.featured),
-						items = data.featured,
+						gridItems = data.featured,
 						favoriteItems = uiState.favoriteItems,
+						numberOfRows = 3,
 						snackbarHostState = snackbarHostState,
 						onFavorite = { actions(HomeActions.Favorite(it, !it.isFavorite(uiState.favoriteItems))) },
 						addToCart = { actions(HomeActions.AddToCart(it)) },
-						onItemClick = { navigate(Screens.DetailsScreen(it)) }
+						onItemClick = { id, price ->
+							navigate(Screens.DetailsScreen(id, price))
+						}
 					)
 				}
 			}
@@ -161,21 +185,31 @@ private fun UserInfo(
 	userName: String,
 	modifier: Modifier = Modifier
 ) {
-	val avatarText = userName.trim().split(" ").map { it.first() }.take(2)
-	Row(modifier.padding(horizontal = 16.dp)) {
+	val avatarText = userName.trim().split(" ").map { it.first() }.take(2).joinToString()
+	Row(
+		modifier = modifier.padding(start = 16.dp, bottom = 10.dp),
+		verticalAlignment = Alignment.CenterVertically
+	) {
 		Box(
 			Modifier
 				.clip(CircleShape)
 				.background(Brown)
 		) {
-			Text(text = avatarText.joinToString().uppercase())
+			Text(
+				text = avatarText.replace(",", "").uppercase(),
+				modifier = Modifier.padding(10.dp),
+				color = Black,
+				fontWeight = FontWeight.SemiBold,
+				letterSpacing = 2.sp
+			)
 		}
-		Column {
+		Column(Modifier.padding(start = 4.dp)) {
 			Text(
 				text = LocalContext.current.greetings(),
+				fontWeight = FontWeight.Normal,
 				style = MaterialTheme.typography.labelLarge
 			)
-			Text(text = userName)
+			Text(text = userName, style = MaterialTheme.typography.titleMedium)
 		}
 	}
 }
@@ -186,44 +220,55 @@ private fun PagerItems(
 	item: Item,
 	modifier: Modifier = Modifier,
 	addToCart: (Item) -> Unit,
-	onItemClick: (String) -> Unit
+	onItemClick: (String, String) -> Unit
 ) {
-	val backgroundColor = listOf(Color.Blue, Color.Red, Color.Green, Color.DarkGray)[index]
+	val backgroundColor = listOf(SkyBlue, Brown, Purple, Red)[index]
 
 	Row(
 		modifier = modifier
 			.fillMaxWidth()
 			.padding(16.dp)
 			.height(200.dp)
+			.clip(MaterialTheme.shapes.large)
 			.background(backgroundColor)
-			.clickable { onItemClick(item.id) }
+			.clickable { onItemClick(item.id, item.currentPrice) },
+		verticalAlignment = Alignment.CenterVertically
 	) {
-		LargePoster(
+		SmallPoster(
 			url = item.photos.last().url,
 			contentDescription = item.name,
-			modifier = Modifier.padding(start = 30.dp, top = 20.dp, bottom = 34.dp)
+			modifier = Modifier
+				.padding(start = 20.dp, top = 20.dp, bottom = 34.dp)
+				.fillMaxWidth(0.4f)
 		)
 		Column(
 			modifier = Modifier
 				.padding(horizontal = 20.dp)
-				.weight(1f)
+				.weight(1f),
+			horizontalAlignment = Alignment.End
 		) {
-			Text(text = item.category.name, fontSize = 8.sp, color = Color.White)
-			Text(text = "${item.name} €${item.name}", color = Color.White)
-			Row(modifier = Modifier.fillMaxWidth()) {
-				Spacer(Modifier.weight(1f))
-				Button(
-					onClick = { addToCart(item) },
-					modifier = Modifier.padding(top = 20.dp),
-					shape = RoundedCornerShape(6.dp),
-					colors = ButtonDefaults.buttonColors(Color.White, backgroundColor)
-				) {
-					Icon(
-						imageVector = Icons.Rounded.ShoppingBag,
-						contentDescription = stringResource(R.string.add_to_cart)
-					)
-					Text(text = stringResource(R.string.add_to_cart))
-				}
+			Column {
+				Text(
+					text = item.category.name,
+					fontSize = 10.sp,
+					color = Color.White
+				)
+				Text(text = "${item.name} €${item.currentPrice}", color = Color.White)
+			}
+			Button(
+				onClick = { addToCart(item) },
+				modifier = Modifier.padding(top = 10.dp),
+				shape = RoundedCornerShape(6.dp),
+				colors = ButtonDefaults.buttonColors(Color.White, backgroundColor)
+			) {
+				Icon(
+					imageVector = Icons.Rounded.ShoppingBag,
+					contentDescription = stringResource(R.string.add_to_cart),
+					modifier = Modifier
+						.padding(end = 4.dp)
+						.alpha(0.8f)
+				)
+				Text(text = stringResource(R.string.add_to_cart))
 			}
 		}
 	}
@@ -240,7 +285,7 @@ fun CategoryList(
 fun HorizontalPagerIndicator(
 	pagerState: PagerState,
 	modifier: Modifier = Modifier,
-	indicatorColor: Color = SkyBlue,
+	indicatorColor: Color = Color.White,
 	indicatorSize: Dp = 8.dp
 ) {
 	Row(
@@ -254,7 +299,7 @@ fun HorizontalPagerIndicator(
 				val offsetPercentage = 1f - pageOffset.coerceIn(0f, 1f)
 				indicatorColor.copy(alpha = offsetPercentage)
 			} else {
-				indicatorColor.copy(alpha = 0.1f)
+				indicatorColor.copy(alpha = 0.5f)
 			}
 
 			Box(

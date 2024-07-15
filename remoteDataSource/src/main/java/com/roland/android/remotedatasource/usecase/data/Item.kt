@@ -22,6 +22,5 @@ data class CartItem(
 	val photo: Image = Image(),
 	val currentPrice: String = "",
 	val color: Long = 0,
-	var size: Int = 0,
-	var numberInCart: Int = 0
+	var size: Int = 0
 )

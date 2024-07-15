@@ -7,8 +7,9 @@ class NavActions(private val navController: NavHostController) {
 	fun navigate(screen: Screens) {
 		when (screen) {
 			Screens.HomeScreen -> navigateToHomeScreen()
-			is Screens.DetailsScreen -> navigateToDetailsScreen(screen.itemId)
+			is Screens.DetailsScreen -> navigateToDetailsScreen(screen.itemId, screen.itemPrice)
 			is Screens.ListScreen -> navigateToListScreen(screen.categoryId, screen.categoryName)
+			Screens.AllProductsScreen -> navigateToAllProductsScreen()
 			Screens.SearchScreen -> {}
 			Screens.CartScreen -> navigateToCartScreen()
 			Screens.CheckoutScreen -> navigateToCheckoutScreen()
@@ -20,9 +21,12 @@ class NavActions(private val navController: NavHostController) {
 		navController.navigate(AppRoute.HomeScreen.route)
 	}
 
-	private fun navigateToDetailsScreen(itemId: String) {
+	private fun navigateToDetailsScreen(
+		itemId: String,
+		itemPrice: String
+	) {
 		navController.navigate(
-			AppRoute.DetailsScreen.routeWithInfo(itemId)
+			AppRoute.DetailsScreen.routeWithInfo(itemId, itemPrice)
 		)
 	}
 
@@ -33,6 +37,10 @@ class NavActions(private val navController: NavHostController) {
 		navController.navigate(
 			AppRoute.ListScreen.routeWithCategory(categoryId, categoryName)
 		)
+	}
+
+	private fun navigateToAllProductsScreen() {
+		navController.navigate(AppRoute.AllProductsScreen.route)
 	}
 
 	private fun navigateToCartScreen() {
@@ -46,26 +54,28 @@ class NavActions(private val navController: NavHostController) {
 }
 
 sealed class AppRoute(val route: String) {
-	object HomeScreen: AppRoute("home_screen")
-	object DetailsScreen: AppRoute("details_screen/{itemId}") {
-		fun routeWithInfo(itemId: String) = String.format("details_screen/%s", itemId)
+	data object HomeScreen: AppRoute("home_screen")
+	data object DetailsScreen: AppRoute("details_screen/{itemId}/{itemPrice}") {
+		fun routeWithInfo(itemId: String, itemPrice: String) = String.format("details_screen/%s/%s", itemId, itemPrice)
 	}
-	object ListScreen: AppRoute("list_screen/{category_id}/{category_name}") {
+	data object ListScreen: AppRoute("list_screen/{category_id}/{category_name}") {
 		fun routeWithCategory(
 			categoryId: String,
 			categoryName: String,
 		) = String.format("list_screen/%s/%s", categoryId, categoryName)
 	}
-	object CartScreen: AppRoute("cart_screen")
-	object CheckoutScreen: AppRoute("checkout_screen")
+	data object AllProductsScreen: AppRoute("all_products_screen")
+	data object CartScreen: AppRoute("cart_screen")
+	data object CheckoutScreen: AppRoute("checkout_screen")
 }
 
 sealed class Screens {
-	object HomeScreen : Screens()
-	data class DetailsScreen(val itemId: String) : Screens()
+	data object HomeScreen : Screens()
+	data class DetailsScreen(val itemId: String, val itemPrice: String) : Screens()
+	data object AllProductsScreen : Screens()
 	data class ListScreen(val categoryId: String, val categoryName: String) : Screens()
-	object SearchScreen : Screens()
-	object CartScreen : Screens()
-	object CheckoutScreen : Screens()
-	object Back : Screens()
+	data object SearchScreen : Screens()
+	data object CartScreen : Screens()
+	data object CheckoutScreen : Screens()
+	data object Back : Screens()
 }

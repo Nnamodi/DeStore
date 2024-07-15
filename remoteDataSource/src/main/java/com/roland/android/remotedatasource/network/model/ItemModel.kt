@@ -9,10 +9,12 @@ internal data class ItemModel(
 	val id: String = "",
 	@Json(name = "name")
 	val name: String = "",
-	@Json(name = "description")
+	@Json(name = "available_quantity")
 	val price: String = "", // a workaround concerning the bug I narrated in `PriceModel` file
 	@Json(name = "photos")
 	val photos: List<ImageModel> = emptyList(),
 	@Json(name = "current_price")
-	val currentPrice: List<PriceModel> = emptyList()
+	val currentPrice: List<PriceModel> = emptyList(),
+	@Json(name = "categories")
+	val categories: List<CategoryModel> = emptyList()
 )

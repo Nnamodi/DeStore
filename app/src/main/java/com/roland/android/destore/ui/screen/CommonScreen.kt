@@ -7,8 +7,10 @@ import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
+import com.roland.android.remotedatasource.utils.Constant.errorMessage
 import com.roland.android.remotedatasource.utils.State as State
 
 @Composable
@@ -19,6 +21,7 @@ fun <T: Any>CommonScreen(
 	successScreen: @Composable (T) -> Unit,
 ) {
 	val layoutDirection = LocalLayoutDirection.current
+	val context = LocalContext.current
 
 	Box(
 		Modifier.padding(
@@ -31,7 +34,7 @@ fun <T: Any>CommonScreen(
 				loadingScreen(null)
 			}
 			is State.Error -> {
-				loadingScreen(state.throwable.message)
+				loadingScreen(state.throwable.errorMessage(context))
 			}
 			is State.Success -> {
 				successScreen(state.data)

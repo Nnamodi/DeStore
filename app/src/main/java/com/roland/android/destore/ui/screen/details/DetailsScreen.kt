@@ -49,12 +49,13 @@ import androidx.compose.ui.unit.sp
 import com.roland.android.destore.R
 import com.roland.android.destore.ui.components.ColorBox
 import com.roland.android.destore.ui.components.Colors
-import com.roland.android.destore.ui.components.Container
 import com.roland.android.destore.ui.components.DetailsAppBar
 import com.roland.android.destore.ui.components.FavoriteIconButton
+import com.roland.android.destore.ui.components.FixedBottomButton
+import com.roland.android.destore.ui.components.GroupedVerticalGrid
 import com.roland.android.destore.ui.components.LargePoster
 import com.roland.android.destore.ui.components.QuantityButton
-import com.roland.android.destore.ui.components.VerticalGrid
+import com.roland.android.destore.ui.navigation.AppRoute
 import com.roland.android.destore.ui.navigation.Screens
 import com.roland.android.destore.ui.screen.CommonScreen
 import com.roland.android.destore.ui.screen.LoadingScreen
@@ -63,16 +64,19 @@ import com.roland.android.destore.ui.screen.details.DetailsActions.Favorite
 import com.roland.android.destore.ui.screen.details.DetailsActions.RemoveFromCart
 import com.roland.android.destore.ui.screen.home.HorizontalPagerIndicator
 import com.roland.android.destore.ui.theme.Black
+import com.roland.android.destore.ui.theme.Brown
 import com.roland.android.destore.ui.theme.DeStoreTheme
 import com.roland.android.destore.ui.theme.Grey
 import com.roland.android.destore.ui.theme.SkyBlue
 import com.roland.android.destore.utils.Extensions.toItem
 import com.roland.android.remotedatasource.usecase.data.ItemDetails
 import com.roland.android.remotedatasource.utils.State
+import kotlin.math.min
 
 @Composable
 fun DetailsScreen(
 	uiState: DetailsUiState,
+	itemPrice: String,
 	actions: (DetailsActions) -> Unit,
 	navigate: (Screens) -> Unit
 ) {
@@ -87,74 +91,89 @@ fun DetailsScreen(
 			state = uiState.details,
 			loadingScreen = { errorMessage ->
 				LoadingScreen(
-					isLoading = errorMessage == null,
+					errorMessage = errorMessage,
 					modifier = Modifier.fillMaxSize(),
 					paddingValues = paddingValues,
 					retry = { actions(DetailsActions.Reload) }
 				)
 			}
 		) { details ->
-			LazyColumn(contentPadding = PaddingValues(
-				start = paddingValues.calculateStartPadding(layoutDirection),
-				end = paddingValues.calculateEndPadding(layoutDirection),
-				bottom = paddingValues.calculateBottomPadding()
-			)) {
-				item {
-					PhotoPager(item = details)
-				}
-
-				item {
-					Description(
-						item = details,
-						isFavorite = uiState.favorited,
-						onFavorite = {
-							actions(Favorite(it.toItem(), !uiState.favorited))
-						}
+			val addToCart: () -> Unit = {
+				actions(
+					AddToCart(
+						item = details.toItem(itemPrice),
+						color = Colors.entries.random().color.value.toLong(),
+						size = Sizes.entries.random().value
 					)
-				}
+				)
+			}
 
-				item {
-					Selection(
-						numberInCart = uiState.numberInCart,
-						addToCart = { colorValue, size ->
-							actions(AddToCart(details.toItem(), colorValue, size))
-						},
-						removeFromCart = {
-							actions(RemoveFromCart(details.toItem()))
-						}
-					)
-				}
+			Box(contentAlignment = Alignment.BottomCenter) {
+				LazyColumn(contentPadding = PaddingValues(
+					start = paddingValues.calculateStartPadding(layoutDirection),
+					end = paddingValues.calculateEndPadding(layoutDirection),
+					bottom = paddingValues.calculateBottomPadding()
+				)) {
+					item {
+						PhotoPager(item = details)
+					}
 
-				item {
-					CommonScreen(
-						state = uiState.moreInStore,
-						loadingScreen = {
-							LoadingScreen(
-								isLoading = it == null,
-								paddingValues = paddingValues,
-								retry = { actions(DetailsActions.ReloadCategoryList) }
-							)
-						}
-					) { moreInStore ->
-						VerticalGrid(
-							header = stringResource(R.string.more_from, details.categories[0].name),
-							items = moreInStore,
-							favoriteItems = uiState.favoriteItems,
-							snackbarHostState = snackbarHostState,
-							onFavorite = { actions(Favorite(it, !uiState.favorited)) },
-							addToCart = {
-								actions(
-									AddToCart(
-										item = it,
-										color = Colors.entries.random().color.value.toLong(),
-										size = Sizes.entries.random().value
-									)
-								)
-							},
-							onItemClick = { navigate(Screens.DetailsScreen(it)) }
+					item {
+						Description(
+							item = details,
+							itemPrice = itemPrice,
+							isFavorite = uiState.favorited,
+							onFavorite = {
+								actions(Favorite(it.toItem(itemPrice), !uiState.favorited))
+							}
 						)
 					}
+
+					item {
+						Selection(
+							numberInCart = uiState.numberInCart,
+							addToCart = { colorValue, size ->
+								actions(AddToCart(details.toItem(itemPrice), colorValue, size))
+							},
+							removeFromCart = {
+								actions(RemoveFromCart(details.toItem(itemPrice)))
+							}
+						)
+					}
+
+					item {
+						CommonScreen(
+							state = uiState.moreInStore,
+							loadingScreen = { errorMessage ->
+								LoadingScreen(
+									errorMessage = errorMessage,
+									paddingValues = paddingValues,
+									retry = { actions(DetailsActions.ReloadCategoryList) }
+								)
+							}
+						) { moreInStore ->
+							GroupedVerticalGrid(
+								header = stringResource(R.string.more_from, details.categories[0].name),
+								gridItems = moreInStore,
+								favoriteItems = uiState.favoriteItems,
+								numberOfRows = min(2, moreInStore.size),
+								snackbarHostState = snackbarHostState,
+								onFavorite = { actions(Favorite(it, !uiState.favorited)) },
+								addToCart = { addToCart() },
+								onItemClick = { id, price ->
+									navigate(Screens.DetailsScreen(id, price))
+								}
+							)
+						}
+					}
 				}
+				FixedBottomButton(
+					subTitle = stringResource(R.string.total_price),
+					title = "€$itemPrice",
+					screen = AppRoute.DetailsScreen,
+					buttonText = stringResource(R.string.add_to_cart),
+					navigate = { addToCart() }
+				)
 			}
 		}
 	}
@@ -165,15 +184,15 @@ private fun PhotoPager(
 	item: ItemDetails,
 	modifier: Modifier = Modifier
 ) {
-	val pagerState = rememberPagerState { 4 }
+	val pagerState = rememberPagerState { item.photos.size }
 
 	Box(
-		modifier = modifier.fillMaxHeight(0.45f),
+		modifier = modifier.fillMaxHeight(0.3f),
 		contentAlignment = Alignment.BottomCenter
 	) {
 		HorizontalPager(
 			state = pagerState,
-			beyondBoundsPageCount = 4,
+			beyondBoundsPageCount = item.photos.size,
 		) { page ->
 			LargePoster(
 				url = item.photos[page].url,
@@ -182,16 +201,24 @@ private fun PhotoPager(
 			)
 		}
 
-		HorizontalPagerIndicator(
-			pagerState = pagerState,
-			modifier = Modifier.padding(bottom = 20.dp)
-		)
+		Box(
+			Modifier
+				.clip(MaterialTheme.shapes.small)
+				.background(Brown)
+				.padding(6.dp)
+		) {
+			HorizontalPagerIndicator(
+				pagerState = pagerState,
+				modifier = Modifier.padding(bottom = 20.dp)
+			)
+		}
 	}
 }
 
 @Composable
 private fun Description(
 	item: ItemDetails,
+	itemPrice: String,
 	isFavorite: Boolean,
 	modifier: Modifier = Modifier,
 	onFavorite: (ItemDetails) -> Unit
@@ -204,7 +231,7 @@ private fun Description(
 		Text(
 			text = item.categories[0].name,
 			modifier = Modifier.padding(horizontal = 10.dp),
-			fontSize = 8.sp
+			fontSize = 12.sp
 		)
 		Row(
 			modifier = Modifier.fillMaxWidth(),
@@ -212,7 +239,7 @@ private fun Description(
 		) {
 			Text(
 				text = item.name,
-				modifier = Modifier.padding(vertical = 10.dp),
+				modifier = Modifier.padding(bottom = 10.dp),
 				fontWeight = FontWeight.Bold,
 				style = MaterialTheme.typography.titleLarge
 			)
@@ -223,7 +250,7 @@ private fun Description(
 			)
 		}
 		Text(
-			text = "€" + item.currentPrice,
+			text = "€$itemPrice",
 			fontWeight = FontWeight.Medium
 		)
 
@@ -250,10 +277,9 @@ private fun Selection(
 	var selectedColor by rememberSaveable { mutableStateOf(Colors.entries.random()) }
 
 	Column(modifier.padding(horizontal = 16.dp)) {
-		Container(
+		SelectionBox(
 			header = stringResource(R.string.size),
-			modifier = Modifier.padding(bottom = 16.dp),
-			showNavigateButton = false
+			modifier = Modifier.padding(bottom = 6.dp)
 		) {
 			Row(
 				modifier = Modifier.horizontalScroll(rememberScrollState()),
@@ -269,10 +295,9 @@ private fun Selection(
 				}
 			}
 		}
-		Container(
+		SelectionBox(
 			header = stringResource(R.string.colors),
-			modifier = Modifier.padding(bottom = 16.dp),
-			showNavigateButton = false
+			modifier = Modifier.padding(bottom = 6.dp)
 		) {
 			Row(
 				modifier = Modifier.horizontalScroll(rememberScrollState()),
@@ -288,10 +313,9 @@ private fun Selection(
 				}
 			}
 		}
-		Container(
+		SelectionBox(
 			header = stringResource(R.string.quantity),
-			modifier = Modifier.padding(bottom = 46.dp),
-			showNavigateButton = false
+			modifier = Modifier.padding(bottom = 46.dp)
 		) {
 			QuantityButton(
 				itemSize = numberInCart.toString(),
@@ -309,6 +333,22 @@ private fun Selection(
 }
 
 @Composable
+private fun SelectionBox(
+	header: String,
+	modifier: Modifier = Modifier,
+	content: @Composable () -> Unit
+) {
+	Column(modifier.fillMaxWidth()) {
+		Text(
+			text = header,
+			fontSize = 15.sp,
+			fontWeight = FontWeight.Bold
+		)
+		content()
+	}
+}
+
+@Composable
 private fun SizeBox(
 	size: Sizes,
 	selected: Boolean,
@@ -318,15 +358,13 @@ private fun SizeBox(
 	Box(
 		modifier
 			.animateContentSize()
-			.size(24.dp)
+			.clip(MaterialTheme.shapes.small)
 			.background(if (selected) SkyBlue else Grey)
 			.padding(12.dp, 4.dp)
-			.clip(MaterialTheme.shapes.small)
 			.clickable { onSelect(size) }
 	) {
 		Text(
 			text = "${size.value}",
-			modifier = Modifier.padding(),
 			color = if (selected) White else Black,
 			fontSize = 15.sp
 		)
@@ -347,6 +385,6 @@ enum class Sizes(@StringRes val value: Int) {
 private fun DetailsScreenPreview() {
 	DeStoreTheme {
 		val uiState = DetailsUiState(State.Error(Exception("No internet connection")))
-		DetailsScreen(uiState, {}) {}
+		DetailsScreen(uiState, "", {}) {}
 	}
 }

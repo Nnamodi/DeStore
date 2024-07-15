@@ -27,18 +27,18 @@ fun NavGraphBuilder.animatedComposable(
 	deepLinks = deepLinks,
 	enterTransition = {
 		if (animationDirection == LeftRight) {
-			slideInHorizontally(tween(700)) { it }
+			slideInHorizontally(tween(500)) { it }
 		} else {
-			slideInVertically(tween(700)) { it }
+			slideInVertically(tween(500)) { it }
 		}
 	},
 	exitTransition = null,
 	popEnterTransition = null,
 	popExitTransition = {
 		if (animationDirection == LeftRight) {
-			slideOutHorizontally(tween(700)) { it }
+			slideOutHorizontally(tween(500)) { it }
 		} else {
-			slideOutVertically(tween(700)) { it }
+			slideOutVertically(tween(500)) { it }
 		}
 	},
 	content = content

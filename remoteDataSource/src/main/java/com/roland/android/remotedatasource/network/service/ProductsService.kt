@@ -2,7 +2,6 @@ package com.roland.android.remotedatasource.network.service
 
 import com.roland.android.remotedatasource.BuildConfig
 import com.roland.android.remotedatasource.network.model.ItemDetailsModel
-import com.roland.android.remotedatasource.network.model.ItemModel
 import com.roland.android.remotedatasource.network.model.ListModel
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -18,7 +17,7 @@ internal interface ProductsService {
 		@Query("size") size: Int = 100
 	): ListModel
 
-	@GET("/products{product_id}")
+	@GET("/products/{product_id}")
 	suspend fun fetchItem(
 		@Path("product_id") productId: String,
 		@Query("organization_id") orgId: String = BuildConfig.ORGANIZATION_ID,

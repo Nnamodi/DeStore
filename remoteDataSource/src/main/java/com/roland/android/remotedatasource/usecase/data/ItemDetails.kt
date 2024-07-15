@@ -7,6 +7,6 @@ data class ItemDetails(
 	val name: String = "",
 	val description: String = "",
 	val photos: List<Image> = emptyList(),
-	val currentPrice: String = "",
+	val currentPrice: String? = null,
 	val categories: List<Category> = emptyList()
 )

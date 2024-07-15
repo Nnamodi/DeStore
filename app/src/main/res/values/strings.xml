@@ -11,6 +11,7 @@
     <string name="featured">Featured Sneakers</string>
     <string name="back">Back</string>
     <string name="added_to_cart">\'%1$s\' added to cart</string>
+    <string name="added_to_favorite">\'%1$s\' added to favorite</string>
     <string name="favorite">Add to favorite</string>
     <string name="unfavorite">Remove from favorite</string>
     <string name="more_from">More from %1$s</string>
@@ -40,4 +41,9 @@
     <string name="colors">Colours</string>
     <string name="color_is_selected">%1$s is selected</string>
     <string name="order_list">Order list</string>
+    <string name="home">Home</string>
+    <string name="cart">Cart</string>
+    <string name="all_products">All Products</string>
+    <string name="cart_is_empty">Cart is Empty</string>
+    <string name="remove_from_cart">Remove from cart</string>
 </resources>

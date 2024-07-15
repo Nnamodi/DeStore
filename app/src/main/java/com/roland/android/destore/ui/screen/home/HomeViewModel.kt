@@ -26,7 +26,7 @@ class HomeViewModel : ViewModel(), KoinComponent {
 
 	private val _homeUiState = MutableStateFlow(HomeUiState())
 	var homeUiState by mutableStateOf(_homeUiState.value)
-	var cartItems by mutableStateOf<List<CartItem>>(emptyList())
+	private var cartItems by mutableStateOf<List<CartItem>>(emptyList())
 	var favoriteItems by mutableStateOf<List<Item>>(emptyList())
 
 	init {
@@ -38,8 +38,8 @@ class HomeViewModel : ViewModel(), KoinComponent {
 			}
 		}
 		viewModelScope.launch {
-			favoriteItemsFlow.collect {
-				favoriteItems = it
+			favoriteItemsFlow.collect { items ->
+				favoriteItems = items
 				_homeUiState.update { it.copy(favoriteItems = favoriteItems) }
 			}
 		}
@@ -69,10 +69,9 @@ class HomeViewModel : ViewModel(), KoinComponent {
 	}
 
 	private fun addToCart(item: Item) {
-		val numberInCart = cartItems.filter { it.id == item.id }.size
 		val color = Colors.entries.random().color.value.toLong()
 		val size = Sizes.entries.random().value
-		cartItemsFlow.value = cartItems + item.toCartItem(color, size, numberInCart)
+		cartItemsFlow.value = cartItems + item.toCartItem(color, size)
 	}
 
 	private fun favorite(

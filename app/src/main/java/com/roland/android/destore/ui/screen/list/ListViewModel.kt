@@ -47,8 +47,8 @@ class ListViewModel : ViewModel(), KoinComponent {
 		}
 	}
 
-	fun fetchData(categoryListId: String) {
-		categoryId = categoryListId
+	fun fetchData(categoryListId: String? = null) {
+		categoryListId?.let { categoryId = it }
 		viewModelScope.launch {
 			getCategoryUseCase.execute(GetCategoryUseCase.Request(categoryListId))
 				.map { convertToCategoryData(it) }
@@ -72,7 +72,7 @@ class ListViewModel : ViewModel(), KoinComponent {
 		size: Int
 	) {
 		val numberInCart = cartItems.filter { it.id == item.id }.size
-		cartItemsFlow.value = cartItems + item.toCartItem(color, size, numberInCart)
+		cartItemsFlow.value = cartItems + item.toCartItem(color, size)
 	}
 
 	private fun favorite(

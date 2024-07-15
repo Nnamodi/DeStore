@@ -32,6 +32,7 @@ import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
 import coil.compose.AsyncImagePainter.State.Empty
 import coil.request.ImageRequest
+import com.roland.android.destore.utils.Extensions.round
 import com.roland.android.destore.utils.painterPlaceholder
 import com.roland.android.remotedatasource.usecase.data.Item
 import com.roland.android.remotedatasource.utils.Constant.BASE_IMAGE_URL
@@ -45,13 +46,13 @@ fun Product(
 	showOriginalPrice: Boolean,
 	favorite: (Item) -> Unit,
 	addToCart: (Item) -> Unit,
-	onItemClick: (String) -> Unit
+	onItemClick: (String, String) -> Unit
 ) {
 	Column(
 		modifier = modifier
 			.padding(end = 10.dp, bottom = 10.dp)
 			.clip(MaterialTheme.shapes.large)
-			.clickable { onItemClick(item.id) }
+			.clickable { onItemClick(item.id, item.currentPrice) }
 			.padding(8.dp)
 	) {
 		Box(contentAlignment = Alignment.TopEnd) {
@@ -63,37 +64,33 @@ fun Product(
 		}
 		Text(
 			text = item.category.name,
-			modifier = Modifier
-				.padding(horizontal = 10.dp)
-				.basicMarquee(),
-			fontSize = 8.sp,
+			fontSize = 10.sp,
 			softWrap = false
 		)
 		Text(
 			text = item.name,
-			modifier = Modifier
-				.padding(horizontal = 10.dp)
-				.basicMarquee(),
+			modifier = Modifier.basicMarquee(),
 			fontSize = 18.sp,
 			fontWeight = FontWeight.Medium,
 			softWrap = false
 		)
 		Row(
 			modifier = Modifier.fillMaxWidth(),
-			verticalAlignment = Alignment.Bottom
+			verticalAlignment = Alignment.CenterVertically
 		) {
 			Column {
 				Text(
 					text = "€" + item.currentPrice,
-					modifier = Modifier.padding(start = 10.dp, bottom = 20.dp),
+					modifier = Modifier.padding(top = 10.dp),
 					color = Color.Blue
 				)
 				if (showOriginalPrice) {
-					val originalPrice = ((12 / item.currentPrice.toInt()) * 100 + item.currentPrice.toInt())
+					val currentPrice = item.currentPrice.replace(",", "").toDouble()
+					val originalPrice = ((12 / currentPrice) * 100 + currentPrice).round()
 					Text(
 						text = "€$originalPrice",
 						modifier = Modifier
-							.padding(start = 10.dp, bottom = 20.dp)
+							.padding(bottom = 20.dp)
 							.alpha(0.7f),
 						textDecoration = TextDecoration.LineThrough
 					)

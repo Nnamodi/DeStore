@@ -1,13 +1,11 @@
 package com.roland.android.remotedatasource.usecase
 
-import com.roland.android.remotedatasource.network.model.ItemModel
 import com.roland.android.remotedatasource.repository.ProductsRepository
 import com.roland.android.remotedatasource.usecase.data.Item
 import com.roland.android.remotedatasource.utils.Constant.FEATURED_CATEGORY
 import com.roland.android.remotedatasource.utils.Constant.SPECIALS_CATEGORY
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
