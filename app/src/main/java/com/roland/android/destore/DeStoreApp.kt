@@ -1,7 +1,6 @@
 package com.roland.android.destore
 
 import android.app.Application
-import com.roland.android.destore.ui.screen.ProductsViewModel
 import com.roland.android.destore.ui.screen.cart.CartViewModel
 import com.roland.android.destore.ui.screen.details.DetailsViewModel
 import com.roland.android.destore.ui.screen.home.HomeViewModel

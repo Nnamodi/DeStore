@@ -2,9 +2,7 @@ package com.roland.android.destore.ui.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
@@ -15,19 +13,16 @@ import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AttachEmail
-import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material.icons.rounded.LocalConvenienceStore
 import androidx.compose.material.icons.rounded.Numbers
 import androidx.compose.material.icons.rounded.PermContactCalendar
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.shapes
@@ -51,8 +46,8 @@ import androidx.compose.ui.unit.sp
 import com.roland.android.destore.R
 import com.roland.android.destore.data.UserInfo
 import com.roland.android.destore.ui.theme.SkyBlue
-import com.roland.android.destore.utils.Extensions.getColor
 import com.roland.android.destore.utils.Extensions.round
+import com.roland.android.destore.utils.Extensions.transformList
 import com.roland.android.remotedatasource.usecase.data.CartItem
 import com.roland.android.remotedatasource.usecase.data.Item
 import kotlinx.coroutines.launch
@@ -67,7 +62,7 @@ fun VerticalGrid(
 	snackbarHostState: SnackbarHostState,
 	onFavorite: (Item) -> Unit,
 	addToCart: (Item) -> Unit,
-	onItemClick: (String, String) -> Unit
+	onItemClick: (ItemId, ItemPrice) -> Unit
 ) {
 	val scope = rememberCoroutineScope()
 	val context = LocalContext.current
@@ -82,7 +77,8 @@ fun VerticalGrid(
 		}
 		LazyVerticalGrid(
 			columns = GridCells.Adaptive(150.dp),
-			modifier = modifier.padding(start = 10.dp)
+			modifier = modifier.padding(start = 10.dp),
+			contentPadding = PaddingValues(bottom = 100.dp)
 		) {
 			items(items.size) { index ->
 				Product(
@@ -129,11 +125,11 @@ fun GroupedVerticalGrid(
 	snackbarHostState: SnackbarHostState,
 	onFavorite: (Item) -> Unit,
 	addToCart: (Item) -> Unit,
-	onItemClick: (String, String) -> Unit
+	onItemClick: (ItemId, ItemPrice) -> Unit
 ) {
 	val scope = rememberCoroutineScope()
 	val context = LocalContext.current
-	val items = gridItems.take(numberOfRows * 2)
+	val items = gridItems.take(numberOfRows * 2).transformList()
 
 	Column(modifier.padding(start = 10.dp)) {
 		Text(
@@ -142,11 +138,15 @@ fun GroupedVerticalGrid(
 			fontWeight = FontWeight.Bold,
 			style = MaterialTheme.typography.headlineSmall
 		)
-		repeat(numberOfRows) { index ->
+		repeat(items.size) { index ->
+			val item = items[index]
+			val even = index % 2 == 0
+			val twoItemsInARow = even || item.getOrNull(1) != null
+
 			Row(Modifier.fillMaxWidth()) {
 				Product(
-					item = items[index],
-					modifier = Modifier.weight(1f),
+					item = item[0],
+					modifier = if (twoItemsInARow) Modifier.weight(1f) else Modifier.fillMaxWidth(0.5f),
 					favoriteItems = favoriteItems,
 					favorite = {
 						scope.launch {
@@ -173,35 +173,37 @@ fun GroupedVerticalGrid(
 					},
 					onItemClick = onItemClick
 				)
-				Product(
-					item = items[index + 1],
-					modifier = Modifier.weight(1f),
-					favoriteItems = favoriteItems,
-					favorite = {
-						scope.launch {
-							snackbarHostState.showSnackbar(
-								context.getString(
-									R.string.added_to_favorite,
-									it.name
+				if (twoItemsInARow) {
+					Product(
+						item = item[1],
+						modifier = Modifier.weight(1f),
+						favoriteItems = favoriteItems,
+						favorite = {
+							scope.launch {
+								snackbarHostState.showSnackbar(
+									context.getString(
+										R.string.added_to_favorite,
+										it.name
+									)
 								)
-							)
-						}
-						onFavorite(it)
-					},
-					showOriginalPrice = showOriginalPrice,
-					addToCart = {
-						scope.launch {
-							snackbarHostState.showSnackbar(
-								context.getString(
-									R.string.added_to_cart,
-									it.name
+							}
+							onFavorite(it)
+						},
+						showOriginalPrice = showOriginalPrice,
+						addToCart = {
+							scope.launch {
+								snackbarHostState.showSnackbar(
+									context.getString(
+										R.string.added_to_cart,
+										it.name
+									)
 								)
-							)
-						}
-						addToCart(it)
-					},
-					onItemClick = onItemClick
-				)
+							}
+							addToCart(it)
+						},
+						onItemClick = onItemClick
+					)
+				}
 			}
 		}
 	}
@@ -219,7 +221,7 @@ fun CartItems(
 	remove: (CartItem) -> Unit = {},
 	removeFromCart: (CartItem) -> Unit = {},
 	backToCart: () -> Unit = {},
-	viewDetails: (String, String) -> Unit = { _, _ ->}
+	viewDetails: (ItemId, ItemPrice) -> Unit = { _, _ ->}
 ) {
 	val layoutDirection = LocalLayoutDirection.current
 	val items = cartItems.toSet().toList()
@@ -249,7 +251,11 @@ fun CartItems(
 				item = item,
 				modifier = Modifier.animateItemPlacement(),
 				inCheckoutScreen = inCheckoutScreen,
-				numberInCart = cartItems.filter { it.id == item.id }.size,
+				numberInCart = cartItems.filter {
+					it.id == item.id &&
+						it.color == item.color &&
+							it.size == item.size
+				}.size,
 				add = add,
 				remove = remove,
 				removeFromCart = removeFromCart,
@@ -266,7 +272,7 @@ fun CartItems(
 						Row(Modifier.fillMaxWidth()) {
 							Label(label = userInfo.name, icon = Icons.Rounded.PermContactCalendar)
 							Spacer(Modifier.weight(1f))
-							Label(label = userInfo.name, icon = Icons.Rounded.Numbers)
+							Label(label = userInfo.phone, icon = Icons.Rounded.Numbers)
 						}
 						Label(label = userInfo.email, icon = Icons.Rounded.AttachEmail)
 					}
@@ -286,96 +292,6 @@ fun CartItems(
 			}
 			item {
 				OrderDetails(cartItems)
-			}
-		}
-	}
-}
-
-@Composable
-private fun CartItem(
-	item: CartItem,
-	modifier: Modifier = Modifier,
-	inCheckoutScreen: Boolean,
-	numberInCart: Int,
-	add: (CartItem) -> Unit,
-	remove: (CartItem) -> Unit,
-	removeFromCart: (CartItem) -> Unit,
-	viewDetails: (String, String) -> Unit
-) {
-	Row(
-		modifier = modifier
-			.fillMaxWidth()
-			.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-			.clip(shapes.extraLarge)
-			.border(
-				width = 2.dp,
-				color = colorScheme.onBackground.copy(alpha = 0.2f),
-				shape = shapes.extraLarge
-			)
-			.clickable(!inCheckoutScreen) { viewDetails(item.id, item.currentPrice) }
-			.padding(16.dp),
-		verticalAlignment = Alignment.CenterVertically
-	) {
-		SmallPoster(
-			url = item.photo.url,
-			contentDescription = item.name,
-			modifier = Modifier.clip(shapes.extraLarge)
-		)
-		Column(Modifier.padding(start = 10.dp)) {
-			Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-				Text(text = item.name)
-				Spacer(Modifier.weight(1f))
-				if (!inCheckoutScreen) {
-					IconButton(onClick = { removeFromCart(item) }) {
-						Icon(
-							Icons.Rounded.Clear,
-							stringResource(R.string.remove_from_cart),
-							Modifier.scale(0.8f)
-						)
-					}
-				}
-			}
-			Row(verticalAlignment = Alignment.CenterVertically) {
-				val colorValue = item.color.getColor()
-
-				ColorBox(colorValue, Modifier.padding(top = 4.dp, bottom = 6.dp))
-				Text(
-					text = stringResource(colorValue.nameRes),
-					modifier = Modifier.alpha(0.9f),
-					fontSize = 12.sp
-				)
-				Box(
-					modifier = Modifier
-						.padding(horizontal = 6.dp, vertical = 2.dp)
-						.size(2.dp, 8.dp)
-						.background(colorScheme.onBackground.copy(alpha = 0.5f))
-				)
-				Text(stringResource(R.string.size))
-				Text(
-					text = item.size.toString(),
-					modifier = Modifier
-						.padding(start = 2.dp)
-						.clip(shape = shapes.extraSmall)
-						.background(colorScheme.onBackground.copy(alpha = 0.1f))
-						.padding(4.dp, 2.dp)
-				)
-			}
-			Row(verticalAlignment = Alignment.CenterVertically) {
-				QuantityButton(
-					itemSize = numberInCart.toString(),
-					inCheckoutScreen = inCheckoutScreen,
-					add = { add(item) },
-					remove = { remove(item) }
-				)
-				if (inCheckoutScreen) {
-					Box(
-						modifier = Modifier
-							.padding(horizontal = 6.dp, vertical = 2.dp)
-							.size(2.dp, 8.dp)
-							.background(colorScheme.onBackground.copy(alpha = 0.5f))
-					)
-				}
-				Text("€" + item.currentPrice, Modifier.padding(start = 4.dp))
 			}
 		}
 	}
@@ -408,7 +324,7 @@ fun Container(
 	header: String,
 	modifier: Modifier = Modifier,
 	showNavigateButton: Boolean = true,
-	backgroundColor: Color = SkyBlue.copy(alpha = 0.3f),
+	backgroundColor: Color = SkyBlue.copy(alpha = 0.2f),
 	navigate: () -> Unit = {},
 	content: @Composable ColumnScope.() -> Unit
 ) {
@@ -461,12 +377,16 @@ private fun OrderDetails(
 				repeat(3) { Text("€") }
 			}
 			Column(horizontalAlignment = Alignment.End) {
-				Text("$subTotal", Modifier.padding(start = 10.dp))
-				Text("$deliveryFee")
-				Text("$discount")
+				Text("$subTotal", Modifier.padding(start = 10.dp), fontWeight = FontWeight.Medium)
+				Text("$deliveryFee", fontWeight = FontWeight.Medium)
+				Text("$discount", fontWeight = FontWeight.Medium)
 			}
 		}
-		HorizontalDivider(Modifier.padding(vertical = 20.dp))
+		HorizontalDivider(
+			Modifier
+				.padding(vertical = 20.dp)
+				.background(colorScheme.background)
+		)
 		Row(Modifier.fillMaxWidth()) {
 			Text(
 				text = stringResource(R.string.total),
@@ -475,50 +395,7 @@ private fun OrderDetails(
 					.weight(1f)
 			)
 			Text("€", Modifier.padding(end = 10.dp))
-			Text("$total")
-		}
-	}
-}
-
-@Composable
-fun QuantityButton(
-	itemSize: String,
-	inCheckoutScreen: Boolean,
-	add: () -> Unit,
-	remove: () -> Unit
-) {
-	Row(
-		modifier = Modifier
-			.clip(shape = shapes.medium)
-			.background(colorScheme.onBackground.copy(alpha = 0.1f))
-			.padding(horizontal = if (inCheckoutScreen) 0.dp else 6.dp),
-		verticalAlignment = Alignment.CenterVertically
-	) {
-		if (!inCheckoutScreen) {
-			Text(
-				text = "-",
-				modifier = Modifier
-					.clickable { remove() }
-					.padding(horizontal = 4.dp),
-				fontSize = 16.sp
-			)
-		}
-		Text(
-			text = itemSize,
-			modifier = Modifier
-				.padding(if (inCheckoutScreen) 0.dp else 4.dp)
-				.clip(shape = shapes.medium)
-				.background(colorScheme.onBackground.copy(alpha = 0.1f))
-				.padding(8.dp, 4.dp)
-		)
-		if (!inCheckoutScreen) {
-			Text(
-				text = "+",
-				modifier = Modifier
-					.clickable { add() }
-					.padding(horizontal = 4.dp),
-				fontSize = 16.sp
-			)
+			Text("$total", fontWeight = FontWeight.Medium)
 		}
 	}
 }

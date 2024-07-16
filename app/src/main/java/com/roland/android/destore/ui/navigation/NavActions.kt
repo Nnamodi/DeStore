@@ -1,5 +1,6 @@
 package com.roland.android.destore.ui.navigation
 
+import android.annotation.SuppressLint
 import androidx.navigation.NavHostController
 
 class NavActions(private val navController: NavHostController) {
@@ -13,7 +14,8 @@ class NavActions(private val navController: NavHostController) {
 			Screens.SearchScreen -> {}
 			Screens.CartScreen -> navigateToCartScreen()
 			Screens.CheckoutScreen -> navigateToCheckoutScreen()
-			Screens.Back -> navController.navigateUp()
+			Screens.OrderCompleteScreen -> navigateToOrderCompleteScreen()
+			Screens.Back -> navigateUp()
 		}
 	}
 
@@ -51,6 +53,21 @@ class NavActions(private val navController: NavHostController) {
 		navController.navigate(AppRoute.CheckoutScreen.route)
 	}
 
+	private fun navigateToOrderCompleteScreen() {
+		navController.navigate(AppRoute.OrderCompleteScreen.route)
+	}
+
+	@SuppressLint("RestrictedApi")
+	private fun navigateUp() {
+		val navBackStackEntry = navController.currentBackStack.value
+		val currentRoute = navBackStackEntry.last().destination.route
+		if (currentRoute == AppRoute.OrderCompleteScreen.route) {
+			navController.popBackStack(AppRoute.HomeScreen.route, false)
+		} else {
+			navController.navigateUp()
+		}
+	}
+
 }
 
 sealed class AppRoute(val route: String) {
@@ -67,6 +84,7 @@ sealed class AppRoute(val route: String) {
 	data object AllProductsScreen: AppRoute("all_products_screen")
 	data object CartScreen: AppRoute("cart_screen")
 	data object CheckoutScreen: AppRoute("checkout_screen")
+	data object OrderCompleteScreen: AppRoute("order_complete_screen")
 }
 
 sealed class Screens {
@@ -77,5 +95,6 @@ sealed class Screens {
 	data object SearchScreen : Screens()
 	data object CartScreen : Screens()
 	data object CheckoutScreen : Screens()
+	data object OrderCompleteScreen : Screens()
 	data object Back : Screens()
 }

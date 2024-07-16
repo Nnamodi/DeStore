@@ -2,7 +2,6 @@
     <string name="app_name">DeStore</string>
     <string name="retry">RETRY</string>
     <string name="search">Search</string>
-    <string name="add_to_cart">Add to cart</string>
     <string name="good_morning">Good morning 👋🏽</string>
     <string name="good_afternoon">Good afternoon 👋🏽</string>
     <string name="good_evening">Good evening 👋🏽</string>
@@ -10,10 +9,11 @@
     <string name="our_special_offers">Our Special Offers</string>
     <string name="featured">Featured Sneakers</string>
     <string name="back">Back</string>
-    <string name="added_to_cart">\'%1$s\' added to cart</string>
-    <string name="added_to_favorite">\'%1$s\' added to favorite</string>
-    <string name="favorite">Add to favorite</string>
-    <string name="unfavorite">Remove from favorite</string>
+    <string name="add_to_cart">Add to Cart</string>
+    <string name="added_to_cart">\'%1$s\' added to Cart</string>
+    <string name="added_to_favorite">\'%1$s\' added to Favorite</string>
+    <string name="favorite">Add to Favorite</string>
+    <string name="unfavorite">Remove from Favorite</string>
     <string name="more_from">More from %1$s</string>
     <string name="black">Black</string>
     <string name="red">Red</string>
@@ -45,5 +45,14 @@
     <string name="cart">Cart</string>
     <string name="all_products">All Products</string>
     <string name="cart_is_empty">Cart is Empty</string>
-    <string name="remove_from_cart">Remove from cart</string>
+    <string name="remove_from_cart">Remove from Cart</string>
+    <string name="order_complete">Order Complete</string>
+    <string name="order_complete_message">You have successfully placed an order. Details of your order has been sent to your email.</string>
+    <string name="okay">Okay</string>
+    <string name="payment_successful">Payment successful</string>
+    <string name="view_more">View more</string>
+    <string name="addidas">Addidas</string>
+    <string name="nike">Nike</string>
+    <string name="reebok">Reebok</string>
+    <string name="timberland">Timberland</string>
 </resources>

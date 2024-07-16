@@ -3,6 +3,7 @@
 package com.roland.android.destore.ui.components
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
@@ -24,6 +25,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -34,7 +36,8 @@ import com.roland.android.destore.ui.navigation.AppRoute
 import com.roland.android.destore.ui.navigation.Screens
 
 @Composable
-fun HomeAppBar(navigate: (Screens) -> Unit) {
+fun HomeAppBar() {
+	val context = LocalContext.current
 	TopAppBar(
 		title = {
 			Text(
@@ -43,7 +46,9 @@ fun HomeAppBar(navigate: (Screens) -> Unit) {
 			)
 		},
 		actions = {
-			IconButton(onClick = { navigate(Screens.SearchScreen) }) {
+			IconButton(onClick = {
+				Toast.makeText(context, "Coming Soon", Toast.LENGTH_SHORT).show()
+			}) {
 				Icon(Icons.Rounded.Search, stringResource(R.string.search))
 			}
 		}
@@ -101,11 +106,15 @@ fun NavBar(
 
 	NavigationBar(modifier) {
 		NavBarItems.entries.forEach { item ->
+			val inBackStack = item.route == currentRoute || item.route in backStack
 			NavigationBarItem(
 				selected = when (item) {
-					NavBarItems.Home -> item.route == currentRoute
-					NavBarItems.AllProducts -> item.route == currentRoute || item.route in backStack
-					NavBarItems.Cart -> item.route == currentRoute || item.route in backStack
+					NavBarItems.Home -> {
+						val noHomeScreenInStack = NavBarItems.entries.filter { it != NavBarItems.Home }
+							.all { it.route !in backStack }
+						inBackStack && noHomeScreenInStack
+					}
+					else -> inBackStack
 				},
 				onClick = {
 					navController.navigate(item.route) {

@@ -12,6 +12,7 @@ import com.roland.android.destore.utils.ResponseConverter.convertToCategoryData
 import com.roland.android.remotedatasource.usecase.GetCategoryUseCase
 import com.roland.android.remotedatasource.usecase.data.CartItem
 import com.roland.android.remotedatasource.usecase.data.Item
+import com.roland.android.remotedatasource.utils.State
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
@@ -24,9 +25,9 @@ class ListViewModel : ViewModel(), KoinComponent {
 
 	private val _listUiState = MutableStateFlow(ListUiState())
 	var listUiState by mutableStateOf(_listUiState.value)
-	var cartItems by mutableStateOf<List<CartItem>>(emptyList())
+	private var cartItems by mutableStateOf<List<CartItem>>(emptyList())
 	var favoriteItems by mutableStateOf<List<Item>>(emptyList())
-	var categoryId by mutableStateOf("")
+	private var categoryId by mutableStateOf("")
 
 	init {
 		viewModelScope.launch {
@@ -35,8 +36,8 @@ class ListViewModel : ViewModel(), KoinComponent {
 			}
 		}
 		viewModelScope.launch {
-			favoriteItemsFlow.collect {
-				favoriteItems = it
+			favoriteItemsFlow.collect { items ->
+				favoriteItems = items
 				_listUiState.update { it.copy(favoriteItems = favoriteItems) }
 			}
 		}
@@ -48,7 +49,11 @@ class ListViewModel : ViewModel(), KoinComponent {
 	}
 
 	fun fetchData(categoryListId: String? = null) {
-		categoryListId?.let { categoryId = it }
+		if (categoryListId == categoryId && listUiState.data is State.Success) return
+
+		_listUiState.update { it.copy(data = null) }
+		categoryId = categoryListId ?: ""
+
 		viewModelScope.launch {
 			getCategoryUseCase.execute(GetCategoryUseCase.Request(categoryListId))
 				.map { convertToCategoryData(it) }
@@ -71,7 +76,6 @@ class ListViewModel : ViewModel(), KoinComponent {
 		color: Long,
 		size: Int
 	) {
-		val numberInCart = cartItems.filter { it.id == item.id }.size
 		cartItemsFlow.value = cartItems + item.toCartItem(color, size)
 	}
 

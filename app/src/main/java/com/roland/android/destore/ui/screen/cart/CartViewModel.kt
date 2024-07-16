@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.roland.android.destore.data.cartItemsFlow
 import com.roland.android.destore.ui.screen.checkout.CheckoutUiState
+import com.roland.android.destore.utils.Extensions.filterCartItems
 import com.roland.android.remotedatasource.usecase.data.CartItem
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -54,17 +55,17 @@ class CartViewModel : ViewModel(), KoinComponent {
 	}
 
 	private fun add(item: CartItem) {
-		val itemInCart = cartItems.filter { it.id == item.id }
+		val itemInCart = cartItems.filterCartItems(item)
 		cartItemsFlow.value = cartItems + itemInCart[0]
 	}
 
 	private fun remove(item: CartItem) {
-		val itemsInCart = cartItems.filter { it.id == item.id }
+		val itemsInCart = cartItems.filterCartItems(item)
 		cartItemsFlow.value = cartItems - itemsInCart.last()
 	}
 
 	private fun removeFromCart(item: CartItem) {
-		val itemsInCart = cartItems.filter { it.id == item.id }
+		val itemsInCart = cartItems.filterCartItems(item)
 		itemsInCart.forEach {
 			cartItemsFlow.value = cartItems - it
 		}

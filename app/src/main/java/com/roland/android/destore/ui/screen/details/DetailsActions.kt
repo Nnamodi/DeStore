@@ -10,7 +10,11 @@ sealed class DetailsActions {
 		val size: Int
 	) : DetailsActions()
 
-	data class RemoveFromCart(val item: Item) : DetailsActions()
+	data class RemoveFromCart(
+		val item: Item,
+		val color: Long,
+		val size: Int
+	) : DetailsActions()
 
 	data class Favorite(
 		val item: Item,

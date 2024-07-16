@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.roland.android.destore.data.cartItemsFlow
 import com.roland.android.destore.data.favoriteItemsFlow
+import com.roland.android.destore.utils.Extensions.filterCartItems
 import com.roland.android.destore.utils.Extensions.toCartItem
 import com.roland.android.destore.utils.ResponseConverter.convertToCategoryData
 import com.roland.android.destore.utils.ResponseConverter.convertToDetailsData
@@ -37,20 +38,17 @@ class DetailsViewModel : ViewModel(), KoinComponent {
 			cartItemsFlow.collect { items ->
 				cartItems = items
 				val numberInCart = cartItems.filter { it.id == productId }.size
-				val favorited = favoriteItems.any { it.id == productId }
-				_detailsUiState.update {
-					it.copy(
-						favorited = favorited,
-						numberInCart = numberInCart,
-						favoriteItems = favoriteItems
-					)
-				}
+				_detailsUiState.update { it.copy(numberInCart = numberInCart) }
 			}
 		}
 		viewModelScope.launch {
-			favoriteItemsFlow.collect {
-				favoriteItems = it
-				_detailsUiState.update { it.copy(favoriteItems = favoriteItems) }
+			favoriteItemsFlow.collect { items ->
+				favoriteItems = items
+				val favorited = favoriteItems.any { it.id == productId }
+				_detailsUiState.update { it.copy(
+					favorited = favorited,
+					favoriteItems = favoriteItems
+				) }
 			}
 		}
 		viewModelScope.launch {
@@ -61,19 +59,26 @@ class DetailsViewModel : ViewModel(), KoinComponent {
 	}
 
 	fun fetchDetails(itemId: String) {
+		if (itemId == productId && detailsUiState.details is State.Success) return
+
+		_detailsUiState.update { it.copy(details = null) }
 		productId = itemId
+
 		viewModelScope.launch {
 			getProductUseCase.execute(GetProductUseCase.Request(itemId))
 				.map { convertToDetailsData(it) }
 				.collect { data ->
 					_detailsUiState.update { it.copy(details = data) }
 					if (data !is State.Success) return@collect
+					val numberInCart = cartItems.filter { it.id == productId }.size
+					_detailsUiState.update { it.copy(numberInCart = numberInCart) }
 					fetchMoreInStore(data.data.categories.firstOrNull()?.id)
 				}
 		}
 	}
 
 	private fun fetchMoreInStore(categoryId: String?) {
+		_detailsUiState.update { it.copy(moreInStore = null) }
 		viewModelScope.launch {
 			getCategoryUseCase.execute(GetCategoryUseCase.Request(categoryId))
 				.map { convertToCategoryData(it) }
@@ -89,7 +94,7 @@ class DetailsViewModel : ViewModel(), KoinComponent {
 			is DetailsActions.Favorite -> favorite(action.item, action.favorite)
 			DetailsActions.Reload -> reload()
 			DetailsActions.ReloadCategoryList -> reloadCategoryList()
-			is DetailsActions.RemoveFromCart -> removeFromCart(action.item)
+			is DetailsActions.RemoveFromCart -> removeFromCart(action.item, action.color, action.size)
 		}
 	}
 
@@ -101,8 +106,13 @@ class DetailsViewModel : ViewModel(), KoinComponent {
 		cartItemsFlow.value = cartItems + item.toCartItem(color, size)
 	}
 
-	private fun removeFromCart(item: Item) {
-		val itemsInCart = cartItems.filter { it.id == item.id }
+	private fun removeFromCart(
+		item: Item,
+		color: Long,
+		size: Int
+	) {
+		val itemsInCart = cartItems.filterCartItems(item.toCartItem(color, size))
+		if (itemsInCart.isEmpty()) return
 		cartItemsFlow.value = cartItems - itemsInCart.last()
 	}
 

@@ -1,7 +1,6 @@
 package com.roland.android.destore.utils
 
 import com.roland.android.destore.ui.screen.home.HomeDataModel
-import com.roland.android.destore.ui.screen.home.HomeUiState
 import com.roland.android.remotedatasource.usecase.GetCategoryUseCase
 import com.roland.android.remotedatasource.usecase.GetProductUseCase
 import com.roland.android.remotedatasource.usecase.GetProductsUseCase

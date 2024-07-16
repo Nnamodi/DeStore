@@ -2,7 +2,11 @@
 
 package com.roland.android.destore.ui.screen.home
 
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -34,6 +38,9 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -43,6 +50,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -63,10 +71,20 @@ import com.roland.android.destore.ui.theme.Purple
 import com.roland.android.destore.ui.theme.Red
 import com.roland.android.destore.ui.theme.SkyBlue
 import com.roland.android.destore.utils.Extensions.greetings
+import com.roland.android.destore.utils.Extensions.transformList
 import com.roland.android.remotedatasource.usecase.data.Item
+import com.roland.android.remotedatasource.utils.Constant.ADDIDAS_CATEGORY
+import com.roland.android.remotedatasource.utils.Constant.FEATURED_CATEGORY
+import com.roland.android.remotedatasource.utils.Constant.NIKE_CATEGORY
+import com.roland.android.remotedatasource.utils.Constant.REEBOK_CATEGORY
+import com.roland.android.remotedatasource.utils.Constant.TIMBERLAND_CATEGORY
 import com.roland.android.remotedatasource.utils.State
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
+
+typealias CategoryId = String
+typealias CategoryName = String
 
 @Composable
 fun HomeScreen(
@@ -80,7 +98,7 @@ fun HomeScreen(
 	val layoutDirection = LocalLayoutDirection.current
 
 	Scaffold(
-		topBar = { HomeAppBar(navigate) },
+		topBar = { HomeAppBar() },
 		snackbarHost = { SnackbarHost(snackbarHostState) }
 	) { paddingValues ->
 		CommonScreen(
@@ -106,6 +124,10 @@ fun HomeScreen(
 
 				item {
 					val pagerState = rememberPagerState { 4 }
+					val list by remember { derivedStateOf {
+						(data.featured.takeLast(4) + data.specialOffers.takeLast(2)).toSet()
+					} }
+					val items = list.toList()
 
 					Box(contentAlignment = Alignment.BottomCenter) {
 						HorizontalPager(
@@ -114,7 +136,7 @@ fun HomeScreen(
 						) { page ->
 							PagerItems(
 								index = page,
-								item = data.featured[page],
+								item = items[page],
 								addToCart = {
 									scope.launch {
 										snackbarHostState.showSnackbar(
@@ -137,12 +159,22 @@ fun HomeScreen(
 							modifier = Modifier.padding(bottom = 30.dp)
 						)
 					}
+
+					LaunchedEffect(pagerState.settledPage) {
+						delay(5000)
+						val currentPage = pagerState.currentPage
+						val nextPage = if (currentPage == pagerState.pageCount) 0 else currentPage + 1
+						pagerState.animateScrollToPage(nextPage, animationSpec = tween(1000))
+					}
 				}
 
 				item {
-					CategoryList { id, name ->
-						navigate(Screens.ListScreen(id, name))
-					}
+					CategoryList(
+						modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 30.dp),
+						navigate = { id, name ->
+							navigate(Screens.ListScreen(id, name))
+						}
+					)
 				}
 
 				item {
@@ -175,6 +207,19 @@ fun HomeScreen(
 						}
 					)
 				}
+
+				item {
+					val categoryName = stringResource(R.string.featured)
+					Box(Modifier.fillMaxWidth(), Alignment.Center) {
+						Button(
+							onClick = { navigate(Screens.ListScreen(FEATURED_CATEGORY, categoryName)) },
+							modifier = Modifier.padding(top = 16.dp),
+							shape = RoundedCornerShape(8.dp)
+						) {
+							Text(text = stringResource(R.string.view_more))
+						}
+					}
+				}
 			}
 		}
 	}
@@ -200,7 +245,7 @@ private fun UserInfo(
 				modifier = Modifier.padding(10.dp),
 				color = Black,
 				fontWeight = FontWeight.SemiBold,
-				letterSpacing = 2.sp
+				letterSpacing = 0.sp
 			)
 		}
 		Column(Modifier.padding(start = 4.dp)) {
@@ -247,11 +292,11 @@ private fun PagerItems(
 				.weight(1f),
 			horizontalAlignment = Alignment.End
 		) {
-			Column {
+			Column(Modifier.fillMaxWidth()) {
 				Text(
 					text = item.category.name,
-					fontSize = 10.sp,
-					color = Color.White
+					color = Color.White,
+					style = MaterialTheme.typography.bodySmall
 				)
 				Text(text = "${item.name} €${item.currentPrice}", color = Color.White)
 			}
@@ -272,13 +317,6 @@ private fun PagerItems(
 			}
 		}
 	}
-}
-
-@Composable
-fun CategoryList(
-	modifier: Modifier = Modifier,
-	navigate: (String, String) -> Unit
-) {
 }
 
 @Composable
@@ -310,6 +348,59 @@ fun HorizontalPagerIndicator(
 			)
 		}
 	}
+}
+
+@Composable
+private fun CategoryList(
+	modifier: Modifier = Modifier,
+	navigate: (CategoryId, CategoryName) -> Unit
+) {
+	val categories = Categories.entries.transformList()
+
+	Column(modifier.fillMaxWidth()) {
+		repeat(categories.size) { baseIndex ->
+			val items = categories[baseIndex]
+
+			Row(
+				modifier = Modifier.fillMaxWidth(),
+				horizontalArrangement = Arrangement.SpaceEvenly
+			) {
+				repeat(items.size) { index ->
+					val category = items[index]
+					val categoryName = stringResource(category.nameRes)
+
+					Column(
+						modifier = Modifier
+							.weight(1f)
+							.padding(horizontal = 2.dp)
+							.clip(MaterialTheme.shapes.large)
+							.clickable { navigate(category.categoryId, categoryName) }
+							.padding(8.dp),
+						verticalArrangement = Arrangement.SpaceEvenly,
+						horizontalAlignment = Alignment.CenterHorizontally
+					) {
+						Image(
+							painter = painterResource(category.logoRes),
+							contentDescription = categoryName,
+							modifier = Modifier.size(36.dp)
+						)
+						Text(categoryName, style = MaterialTheme.typography.bodySmall)
+					}
+				}
+			}
+		}
+	}
+}
+
+private enum class Categories(
+	@StringRes val nameRes: Int,
+	@DrawableRes val logoRes: Int,
+	val categoryId: String,
+) {
+	Addidas(R.string.addidas, R.drawable.addidas_logo, ADDIDAS_CATEGORY),
+	Nike(R.string.nike, R.drawable.nike_logo, NIKE_CATEGORY),
+	Reebok(R.string.reebok, R.drawable.reebok_logo, REEBOK_CATEGORY),
+	Timberland(R.string.timberland, R.drawable.timberland_logo, TIMBERLAND_CATEGORY)
 }
 
 @Preview

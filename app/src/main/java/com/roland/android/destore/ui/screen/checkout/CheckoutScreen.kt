@@ -44,7 +44,7 @@ fun CheckoutScreen(
 			FixedBottomButton(
 				screen = AppRoute.CheckoutScreen,
 				buttonText = stringResource(R.string.proceed),
-				checkout = { actions(CartActions.Checkout) },
+				onButtonClick = { actions(CartActions.Checkout) },
 				navigate = navigate
 			)
 		}

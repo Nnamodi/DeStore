@@ -13,14 +13,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -34,12 +32,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color.Companion.White
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -71,7 +71,11 @@ import com.roland.android.destore.ui.theme.SkyBlue
 import com.roland.android.destore.utils.Extensions.toItem
 import com.roland.android.remotedatasource.usecase.data.ItemDetails
 import com.roland.android.remotedatasource.utils.State
+import kotlinx.coroutines.launch
 import kotlin.math.min
+
+typealias ColorValue = Long
+typealias Size = Int
 
 @Composable
 fun DetailsScreen(
@@ -82,6 +86,8 @@ fun DetailsScreen(
 ) {
 	val snackbarHostState = remember { SnackbarHostState() }
 	val layoutDirection = LocalLayoutDirection.current
+	val context = LocalContext.current
+	val scope = rememberCoroutineScope()
 
 	Scaffold(
 		topBar = { DetailsAppBar(navigate) },
@@ -112,7 +118,7 @@ fun DetailsScreen(
 				LazyColumn(contentPadding = PaddingValues(
 					start = paddingValues.calculateStartPadding(layoutDirection),
 					end = paddingValues.calculateEndPadding(layoutDirection),
-					bottom = paddingValues.calculateBottomPadding()
+					bottom = paddingValues.calculateBottomPadding() + 100.dp
 				)) {
 					item {
 						PhotoPager(item = details)
@@ -124,6 +130,14 @@ fun DetailsScreen(
 							itemPrice = itemPrice,
 							isFavorite = uiState.favorited,
 							onFavorite = {
+								scope.launch {
+									snackbarHostState.showSnackbar(
+										context.getString(
+											R.string.added_to_favorite,
+											it.name
+										)
+									)
+								}
 								actions(Favorite(it.toItem(itemPrice), !uiState.favorited))
 							}
 						)
@@ -135,8 +149,8 @@ fun DetailsScreen(
 							addToCart = { colorValue, size ->
 								actions(AddToCart(details.toItem(itemPrice), colorValue, size))
 							},
-							removeFromCart = {
-								actions(RemoveFromCart(details.toItem(itemPrice)))
+							removeFromCart = { colorValue, size ->
+								actions(RemoveFromCart(details.toItem(itemPrice), colorValue, size))
 							}
 						)
 					}
@@ -172,7 +186,17 @@ fun DetailsScreen(
 					title = "€$itemPrice",
 					screen = AppRoute.DetailsScreen,
 					buttonText = stringResource(R.string.add_to_cart),
-					navigate = { addToCart() }
+					onButtonClick = {
+						scope.launch {
+							snackbarHostState.showSnackbar(
+								context.getString(
+									R.string.added_to_cart,
+									details.name
+								)
+							)
+						}
+						addToCart()
+					}
 				)
 			}
 		}
@@ -187,7 +211,7 @@ private fun PhotoPager(
 	val pagerState = rememberPagerState { item.photos.size }
 
 	Box(
-		modifier = modifier.fillMaxHeight(0.3f),
+		modifier = modifier.height(300.dp),
 		contentAlignment = Alignment.BottomCenter
 	) {
 		HorizontalPager(
@@ -195,23 +219,20 @@ private fun PhotoPager(
 			beyondBoundsPageCount = item.photos.size,
 		) { page ->
 			LargePoster(
-				url = item.photos[page].url,
+				url = item.photos.reversed()[page].url,
 				contentDescription = null,
 				modifier = Modifier.fillMaxSize()
 			)
 		}
 
-		Box(
-			Modifier
+		HorizontalPagerIndicator(
+			pagerState = pagerState,
+			modifier = Modifier
+				.padding(bottom = 14.dp)
 				.clip(MaterialTheme.shapes.small)
-				.background(Brown)
+				.background(Brown.copy(alpha = 0.5f))
 				.padding(6.dp)
-		) {
-			HorizontalPagerIndicator(
-				pagerState = pagerState,
-				modifier = Modifier.padding(bottom = 20.dp)
-			)
-		}
+		)
 	}
 }
 
@@ -228,31 +249,30 @@ private fun Description(
 			.fillMaxWidth()
 			.padding(16.dp)
 	) {
-		Text(
-			text = item.categories[0].name,
-			modifier = Modifier.padding(horizontal = 10.dp),
-			fontSize = 12.sp
-		)
 		Row(
 			modifier = Modifier.fillMaxWidth(),
 			verticalAlignment = Alignment.CenterVertically
 		) {
-			Text(
-				text = item.name,
-				modifier = Modifier.padding(bottom = 10.dp),
-				fontWeight = FontWeight.Bold,
-				style = MaterialTheme.typography.titleLarge
-			)
-			Spacer(Modifier.weight(1f))
+			Column(Modifier.weight(1f)) {
+				Text(item.categories[0].name, style = MaterialTheme.typography.bodySmall)
+				Text(
+					text = item.name,
+					modifier = Modifier.padding(vertical = 4.dp),
+					fontWeight = FontWeight.Bold,
+					lineHeight = 22.sp,
+					style = MaterialTheme.typography.titleLarge
+				)
+				Text(
+					text = "€$itemPrice",
+					fontSize = 15.sp,
+					fontWeight = FontWeight.Medium
+				)
+			}
 			FavoriteIconButton(
 				itemIsFavorite = isFavorite,
 				favorite = { onFavorite(item) }
 			)
 		}
-		Text(
-			text = "€$itemPrice",
-			fontWeight = FontWeight.Medium
-		)
 
 		Text(
 			text = stringResource(R.string.description),
@@ -270,8 +290,8 @@ private fun Description(
 private fun Selection(
 	modifier: Modifier = Modifier,
 	numberInCart: Int,
-	addToCart: (Long, Int) -> Unit,
-	removeFromCart: () -> Unit,
+	addToCart: (ColorValue, Size) -> Unit,
+	removeFromCart: (ColorValue, Size) -> Unit,
 ) {
 	var selectedSize by rememberSaveable { mutableStateOf(Sizes.entries.random()) }
 	var selectedColor by rememberSaveable { mutableStateOf(Colors.entries.random()) }
@@ -279,7 +299,7 @@ private fun Selection(
 	Column(modifier.padding(horizontal = 16.dp)) {
 		SelectionBox(
 			header = stringResource(R.string.size),
-			modifier = Modifier.padding(bottom = 6.dp)
+			modifier = Modifier.padding(bottom = 8.dp)
 		) {
 			Row(
 				modifier = Modifier.horizontalScroll(rememberScrollState()),
@@ -297,7 +317,7 @@ private fun Selection(
 		}
 		SelectionBox(
 			header = stringResource(R.string.colors),
-			modifier = Modifier.padding(bottom = 6.dp)
+			modifier = Modifier.padding(bottom = 8.dp)
 		) {
 			Row(
 				modifier = Modifier.horizontalScroll(rememberScrollState()),
@@ -326,7 +346,12 @@ private fun Selection(
 						selectedSize.value
 					)
 				},
-				remove = removeFromCart
+				remove = {
+					removeFromCart(
+						selectedColor.color.value.toLong(),
+						selectedSize.value
+					)
+				}
 			)
 		}
 	}

@@ -16,12 +16,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.CardTravel
 import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material.icons.rounded.FavoriteBorder
-import androidx.compose.material.icons.rounded.ShoppingBag
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -53,7 +54,7 @@ fun FixedBottomButton(
 	title: String = "",
 	screen: AppRoute,
 	buttonText: String,
-	checkout: () -> Unit = {},
+	onButtonClick: () -> Unit = {},
 	navigate: (Screens) -> Unit = {}
 ) {
 	Row(
@@ -78,13 +79,21 @@ fun FixedBottomButton(
 		}
 		Spacer(Modifier.weight(1f))
 		Button(
-			onClick = { if (screen is AppRoute.CheckoutScreen) {
-				checkout(); navigate(Screens.Back)
-			} else navigate(Screens.CheckoutScreen) },
+			onClick = {
+				when (screen) {
+					is AppRoute.CartScreen -> navigate(Screens.CheckoutScreen)
+					is AppRoute.CheckoutScreen -> {
+						onButtonClick()
+						navigate(Screens.OrderCompleteScreen)
+					}
+					is AppRoute.DetailsScreen -> onButtonClick()
+					else -> {}
+				}
+			},
 			shape = RoundedCornerShape(8.dp)
 		) {
 			if (screen is AppRoute.DetailsScreen) {
-				Icon(Icons.Rounded.CardTravel, null)
+				Icon(Icons.Rounded.CardTravel, null, Modifier.padding(end = 8.dp))
 			}
 			Text(text = buttonText)
 		}
@@ -113,6 +122,49 @@ fun FavoriteIconButton(
 }
 
 @Composable
+fun QuantityButton(
+	itemSize: String,
+	inCheckoutScreen: Boolean,
+	add: () -> Unit,
+	remove: () -> Unit
+) {
+	Row(
+		modifier = Modifier
+			.clip(shape = shapes.medium)
+			.background(colorScheme.onBackground.copy(alpha = 0.1f))
+			.padding(horizontal = if (inCheckoutScreen) 0.dp else 6.dp),
+		verticalAlignment = Alignment.CenterVertically
+	) {
+		if (!inCheckoutScreen) {
+			Text(
+				text = "—",
+				modifier = Modifier
+					.clickable { remove() }
+					.padding(horizontal = 4.dp),
+				fontSize = 16.sp
+			)
+		}
+		Text(
+			text = itemSize,
+			modifier = Modifier
+				.padding(if (inCheckoutScreen) 0.dp else 4.dp)
+				.clip(shape = shapes.medium)
+				.background(colorScheme.onBackground.copy(alpha = 0.1f))
+				.padding(8.dp, 4.dp)
+		)
+		if (!inCheckoutScreen) {
+			Text(
+				text = "+",
+				modifier = Modifier
+					.clickable { add() }
+					.padding(horizontal = 4.dp),
+				fontSize = 20.sp
+			)
+		}
+	}
+}
+
+@Composable
 fun AddToCartIconButton(
 	addToCart: () -> Unit
 ) {
@@ -122,7 +174,7 @@ fun AddToCartIconButton(
 		color = SkyBlue.copy(alpha = 0.4f)
 	) {
 		Icon(
-			imageVector = Icons.Rounded.ShoppingBag,
+			imageVector = Icons.Rounded.CardTravel,
 			modifier = Modifier
 				.scale(0.75f)
 				.padding(5.dp, 3.dp),
@@ -154,7 +206,8 @@ fun ColorBox(
 			Icon(
 				imageVector = Icons.Rounded.Done,
 				contentDescription = stringResource(R.string.color_is_selected, colorName),
-				modifier = Modifier.scale(0.85f)
+				modifier = Modifier.scale(0.85f),
+				tint = Color.White
 			)
 		}
 	}

@@ -54,4 +54,24 @@ object Extensions {
 		size = size
 	)
 
+	fun <T> List<T>.transformList(): List<List<T>> {
+		var i = 0
+		val list = mutableListOf<List<T>>()
+		while (i < size) {
+			val tList = mutableListOf<T>()
+			tList.add(this[i])
+			if (i + 1 < size) { tList.add(this[i + 1]) }
+			list.add(tList.toList())
+			i += if (i + 1 < size) 2 else 1
+		}
+		return list.toList()
+	}
+
+	fun List<CartItem>.filterCartItems(item: CartItem): List<CartItem> =
+		filter {
+			it.id == item.id &&
+				it.color == item.color &&
+					it.size == item.size
+		}
+
 }

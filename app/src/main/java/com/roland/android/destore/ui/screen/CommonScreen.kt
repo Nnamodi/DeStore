@@ -11,7 +11,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
 import com.roland.android.remotedatasource.utils.Constant.errorMessage
-import com.roland.android.remotedatasource.utils.State as State
+import com.roland.android.remotedatasource.utils.State
 
 @Composable
 fun <T: Any>CommonScreen(

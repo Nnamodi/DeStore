@@ -16,6 +16,7 @@ import com.roland.android.destore.R
 import com.roland.android.destore.ui.screen.cart.CartScreen
 import com.roland.android.destore.ui.screen.cart.CartViewModel
 import com.roland.android.destore.ui.screen.checkout.CheckoutScreen
+import com.roland.android.destore.ui.screen.checkout.OrderCompleteScreen
 import com.roland.android.destore.ui.screen.details.DetailsScreen
 import com.roland.android.destore.ui.screen.details.DetailsViewModel
 import com.roland.android.destore.ui.screen.home.HomeScreen
@@ -110,6 +111,9 @@ fun AppRoute(
 				actions = cartViewModel::actions,
 				navigate = navActions::navigate
 			)
+		}
+		animatedComposable(AppRoute.OrderCompleteScreen.route) {
+			OrderCompleteScreen(navActions::navigate)
 		}
 	}
 }
