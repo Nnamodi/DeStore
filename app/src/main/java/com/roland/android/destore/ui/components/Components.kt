@@ -20,7 +20,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.Surface
@@ -60,7 +59,7 @@ fun FixedBottomButton(
 	Row(
 		modifier = modifier
 			.fillMaxWidth()
-			.background(MaterialTheme.colorScheme.surface)
+			.background(colorScheme.surface)
 			.padding(20.dp, 16.dp),
 		verticalAlignment = Alignment.CenterVertically
 	) {
@@ -196,7 +195,7 @@ fun ColorBox(
 			.animateContentSize()
 			.size(28.dp)
 			.padding(2.dp)
-			.clip(MaterialTheme.shapes.small)
+			.clip(shapes.small)
 			.background(color.color)
 			.clickable { onSelect(color) }
 			.padding(2.dp)

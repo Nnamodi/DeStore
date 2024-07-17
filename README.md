@@ -1,18 +1,24 @@
 # DeStore
 This sample shopping app is a task from HNG11 stage 3.
 
+A modification of [Outlet project](https://github.com/Nnamodi/Outlet)
+
 ## Screenshots
-|::::::::::::::::::::::::::::::::::::::::|
-|:--:|
-|![App screen](screenshots/app_screen.png)|
+|::::::::::::::::::::::::::::::::::::::::|::::::::::::::::::::::::::::::::::::::::|::::::::::::::::::::::::::::::::::::::::|::::::::::::::::::::::::::::::::::::::::|::::::::::::::::::::::::::::::::::::::::|
+|:--:|:--:|:--:|:--:|:--:|
+|![Home screen](screenshots/home_screen.png)|![Details screen](screenshots/details_screen.png)|![List screen](screenshots/list_screen.png)|![Cart screen](screenshots/cart_screen.png)|![Checkout screen](screenshots/checkout_screen.png)|
 
 ## Features
 * Shows list of products fetched from remote source
+* Displays product details
+* Explore products by category
 * Requires internet connection
+* Add to and remove from cart
+* Handles error state properly
 
 ## About
 
-* It has only a screens that shows a list of products/items remotely fetched from the [Timbu API](https://docs.timbu.cloud/api/intro).
+* Shows a list of products/items remotely fetched from the [Timbu API](https://docs.timbu.cloud/api/intro).
 * Clean and Simple Material UI
 
 * This project was built with Clean Architecture and MVVM pattern.
@@ -24,11 +30,11 @@ This sample shopping app is a task from HNG11 stage 3.
     `dataRemoteSource` - Fetches data from internet and manipulates it
 <br/>
 
-  ***Explore the virtualized demonstration of the release apk version [here](https://appetize.io/app/b_qgxzowdyi4gbo6jlblutukpyne)***
+  ***Explore the virtualized demonstration of the release apk version [here](https://appetize.io/app/b_6v5wfgmpqj2ki25p2enwbra4py)***
 
   ***Or you can install the apk from below 👇🏽***
 
-  [![DeStore App](https://img.shields.io/badge/DeStore-APK-blue.svg?style=for-the-badge&logo=android)](https://github.com/Nnamodi/DeStore/releases/download/v1.0/app-release.apk)
+  [![DeStore App](https://img.shields.io/badge/DeStore-APK-orange.svg?style=for-the-badge&logo=android)](https://github.com/Nnamodi/DeStore/releases/download/v1.0/app-release.apk)
 
 ## Build Instructions
 You can build the app via Android Studio, or by running the following command in your directory:

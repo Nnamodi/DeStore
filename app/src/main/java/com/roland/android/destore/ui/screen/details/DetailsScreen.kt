@@ -385,8 +385,8 @@ private fun SizeBox(
 			.animateContentSize()
 			.clip(MaterialTheme.shapes.small)
 			.background(if (selected) SkyBlue else Grey)
-			.padding(12.dp, 4.dp)
 			.clickable { onSelect(size) }
+			.padding(12.dp, 4.dp)
 	) {
 		Text(
 			text = "${size.value}",

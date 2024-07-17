@@ -47,8 +47,12 @@ internal object Converters {
 	)
 
 	private fun convertToCategory(categoryModel: CategoryModel) = Category(
-		categoryModel.id,
-		categoryModel.name
+		id = categoryModel.id,
+		name = categoryModel.name.capitalizeFirstLetter()
 	)
+
+	private fun String.capitalizeFirstLetter(): String {
+		return substring(0, 1).uppercase() + substring(1)
+	}
 
 }
