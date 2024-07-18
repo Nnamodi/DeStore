@@ -15,7 +15,7 @@ import com.roland.android.destore.ui.navigation.Screens
 import com.roland.android.destore.ui.screen.EmptyScreen
 import com.roland.android.destore.ui.theme.DeStoreTheme
 import com.roland.android.destore.utils.Extensions.round
-import com.roland.android.remotedatasource.usecase.data.CartItem
+import com.roland.android.domain.data.CartItem
 
 @Composable
 fun CartScreen(
@@ -64,7 +64,12 @@ fun CartScreen(
 @Composable
 private fun CartScreenPreview() {
 	DeStoreTheme {
-		val uiState = CartUiState(listOf(CartItem(), CartItem(), CartItem(), CartItem()))
+		val uiState = CartUiState(listOf(
+			CartItem(),
+			CartItem(),
+			CartItem(),
+			CartItem()
+		))
 		CartScreen(uiState, {}) {}
 	}
 }

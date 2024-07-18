@@ -3,10 +3,10 @@ package com.roland.android.destore.utils
 import android.content.Context
 import com.roland.android.destore.R
 import com.roland.android.destore.ui.components.Colors
-import com.roland.android.remotedatasource.usecase.data.CartItem
-import com.roland.android.remotedatasource.usecase.data.Category
-import com.roland.android.remotedatasource.usecase.data.Item
-import com.roland.android.remotedatasource.usecase.data.ItemDetails
+import com.roland.android.domain.data.CartItem
+import com.roland.android.domain.data.Category
+import com.roland.android.domain.data.Item
+import com.roland.android.domain.data.ItemDetails
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.util.Calendar
@@ -34,13 +34,15 @@ object Extensions {
 		return Colors.valueOf(color?.name ?: Colors.ColorBlue.name)
 	}
 
-	fun ItemDetails.toItem(price: String) = Item(
-		id = id,
-		name = name,
-		photos = photos,
-		currentPrice = price,
-		category = categories.firstOrNull() ?: Category(name = "Generic")
-	)
+	fun ItemDetails.toItem(price: String) =
+		Item(
+			id = id,
+			name = name,
+			photos = photos,
+			currentPrice = price,
+			category = categories.firstOrNull()
+				?: Category(name = "Generic")
+		)
 
 	fun Item.toCartItem(
 		color: Long,

@@ -18,7 +18,7 @@ import com.roland.android.destore.ui.screen.LoadingScreen
 import com.roland.android.destore.ui.screen.details.Sizes
 import com.roland.android.destore.ui.screen.list.ListActions.Favorite
 import com.roland.android.destore.ui.theme.DeStoreTheme
-import com.roland.android.remotedatasource.utils.State
+import com.roland.android.domain.data.State
 
 @Composable
 fun ListScreen(

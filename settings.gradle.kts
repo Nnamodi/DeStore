@@ -22,3 +22,5 @@ dependencyResolutionManagement {
 rootProject.name = "Outlet"
 include(":app")
 include(":remoteDataSource")
+include(":domain")
+include(":localDataSource")

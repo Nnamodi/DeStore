@@ -14,7 +14,7 @@ import com.roland.android.destore.ui.navigation.AppRoute
 import com.roland.android.destore.ui.navigation.Screens
 import com.roland.android.destore.ui.screen.cart.CartActions
 import com.roland.android.destore.ui.theme.DeStoreTheme
-import com.roland.android.remotedatasource.usecase.data.CartItem
+import com.roland.android.domain.data.CartItem
 
 @Composable
 fun CheckoutScreen(
@@ -55,7 +55,12 @@ fun CheckoutScreen(
 @Composable
 private fun CheckoutScreenPreview() {
 	DeStoreTheme {
-		val uiState = CheckoutUiState(listOf(CartItem(), CartItem(), CartItem(), CartItem()))
+		val uiState = CheckoutUiState(listOf(
+			CartItem(),
+			CartItem(),
+			CartItem(),
+			CartItem()
+		))
 		CheckoutScreen(uiState, {}) {}
 	}
 }

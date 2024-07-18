@@ -1,12 +1,9 @@
 package com.roland.android.remotedatasource.di
 
-import com.roland.android.remotedatasource.utils.Constant.TIMBU_BASE_URL
+import com.roland.android.domain.repository.remote.ProductsRepository
 import com.roland.android.remotedatasource.network.service.ProductsService
-import com.roland.android.remotedatasource.repository.ProductsRepository
-import com.roland.android.remotedatasource.repository.impl.ProductsRepositoryImpl
-import com.roland.android.remotedatasource.usecase.GetCategoryUseCase
-import com.roland.android.remotedatasource.usecase.GetProductUseCase
-import com.roland.android.remotedatasource.usecase.GetProductsUseCase
+import com.roland.android.remotedatasource.repository.ProductsRepositoryImpl
+import com.roland.android.remotedatasource.utils.Constant.TIMBU_BASE_URL
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.OkHttpClient
@@ -44,9 +41,6 @@ object NetworkModule {
 		single { provideMoshi() }
 		single { provideRetrofit(get(), get()) }
 		single { provideProductsService(get()) }
-		single { GetCategoryUseCase() }
-		single { GetProductUseCase() }
-		single { GetProductsUseCase() }
 		factory<ProductsRepository> { ProductsRepositoryImpl() }
 	}
 

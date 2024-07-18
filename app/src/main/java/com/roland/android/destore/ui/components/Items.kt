@@ -46,8 +46,8 @@ import com.roland.android.destore.R
 import com.roland.android.destore.utils.Extensions.getColor
 import com.roland.android.destore.utils.Extensions.round
 import com.roland.android.destore.utils.painterPlaceholder
-import com.roland.android.remotedatasource.usecase.data.CartItem
-import com.roland.android.remotedatasource.usecase.data.Item
+import com.roland.android.domain.data.CartItem
+import com.roland.android.domain.data.Item
 import com.roland.android.remotedatasource.utils.Constant.BASE_IMAGE_URL
 
 typealias ItemId = String

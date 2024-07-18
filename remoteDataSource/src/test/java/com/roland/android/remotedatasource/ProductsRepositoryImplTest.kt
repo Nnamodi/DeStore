@@ -1,7 +1,7 @@
 package com.roland.android.remotedatasource
 
-import com.roland.android.remotedatasource.repository.impl.ProductsRepositoryImpl
-import com.roland.android.remotedatasource.usecase.data.Item
+import com.roland.android.domain.data.Item
+import com.roland.android.remotedatasource.repository.ProductsRepositoryImpl
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest

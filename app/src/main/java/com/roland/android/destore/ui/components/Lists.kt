@@ -44,12 +44,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.roland.android.destore.R
-import com.roland.android.destore.data.UserInfo
+import com.roland.android.domain.data.UserInfo
 import com.roland.android.destore.ui.theme.SkyBlue
 import com.roland.android.destore.utils.Extensions.round
 import com.roland.android.destore.utils.Extensions.transformList
-import com.roland.android.remotedatasource.usecase.data.CartItem
-import com.roland.android.remotedatasource.usecase.data.Item
+import com.roland.android.domain.data.CartItem
+import com.roland.android.domain.data.Item
 import kotlinx.coroutines.launch
 
 @Composable

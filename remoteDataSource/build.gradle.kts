@@ -70,6 +70,9 @@ dependencies {
 	implementation(libs.retrofit)
 	implementation(libs.retrofitMoshi)
 
+	// other modules
+	implementation(project(path = ":domain"))
+
 	// test
 	testImplementation(libs.coroutines)
 	testImplementation(libs.junit)

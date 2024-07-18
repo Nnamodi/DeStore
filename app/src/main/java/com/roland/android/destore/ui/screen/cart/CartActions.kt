@@ -1,6 +1,6 @@
 package com.roland.android.destore.ui.screen.cart
 
-import com.roland.android.remotedatasource.usecase.data.CartItem
+import com.roland.android.domain.data.CartItem
 
 sealed class CartActions {
 

@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.roland.android.destore.data.cartItemsFlow
 import com.roland.android.destore.ui.screen.checkout.CheckoutUiState
 import com.roland.android.destore.utils.Extensions.filterCartItems
-import com.roland.android.remotedatasource.usecase.data.CartItem
+import com.roland.android.domain.data.CartItem
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update

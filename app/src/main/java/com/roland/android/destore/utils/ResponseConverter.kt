@@ -1,12 +1,12 @@
 package com.roland.android.destore.utils
 
 import com.roland.android.destore.ui.screen.home.HomeDataModel
-import com.roland.android.remotedatasource.usecase.GetCategoryUseCase
-import com.roland.android.remotedatasource.usecase.GetProductUseCase
-import com.roland.android.remotedatasource.usecase.GetProductsUseCase
-import com.roland.android.remotedatasource.usecase.data.Item
-import com.roland.android.remotedatasource.usecase.data.ItemDetails
-import com.roland.android.remotedatasource.utils.State
+import com.roland.android.domain.usecase.GetCategoryUseCase
+import com.roland.android.domain.usecase.GetProductUseCase
+import com.roland.android.domain.usecase.GetProductsUseCase
+import com.roland.android.domain.data.Item
+import com.roland.android.domain.data.ItemDetails
+import com.roland.android.domain.data.State
 
 object ResponseConverter {
 

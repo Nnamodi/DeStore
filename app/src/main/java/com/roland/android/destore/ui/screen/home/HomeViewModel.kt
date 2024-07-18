@@ -11,9 +11,9 @@ import com.roland.android.destore.ui.components.Colors
 import com.roland.android.destore.ui.screen.details.Sizes
 import com.roland.android.destore.utils.Extensions.toCartItem
 import com.roland.android.destore.utils.ResponseConverter.convertToHomeData
-import com.roland.android.remotedatasource.usecase.GetProductsUseCase
-import com.roland.android.remotedatasource.usecase.data.CartItem
-import com.roland.android.remotedatasource.usecase.data.Item
+import com.roland.android.domain.usecase.GetProductsUseCase
+import com.roland.android.domain.data.CartItem
+import com.roland.android.domain.data.Item
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update

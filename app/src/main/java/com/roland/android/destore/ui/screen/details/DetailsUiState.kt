@@ -1,8 +1,8 @@
 package com.roland.android.destore.ui.screen.details
 
-import com.roland.android.remotedatasource.usecase.data.Item
-import com.roland.android.remotedatasource.usecase.data.ItemDetails
-import com.roland.android.remotedatasource.utils.State
+import com.roland.android.domain.data.Item
+import com.roland.android.domain.data.ItemDetails
+import com.roland.android.domain.data.State
 
 data class DetailsUiState(
 	val details: State<ItemDetails>? = null,

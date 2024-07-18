@@ -69,8 +69,8 @@ import com.roland.android.destore.ui.theme.DeStoreTheme
 import com.roland.android.destore.ui.theme.Grey
 import com.roland.android.destore.ui.theme.SkyBlue
 import com.roland.android.destore.utils.Extensions.toItem
-import com.roland.android.remotedatasource.usecase.data.ItemDetails
-import com.roland.android.remotedatasource.utils.State
+import com.roland.android.domain.data.ItemDetails
+import com.roland.android.domain.data.State
 import kotlinx.coroutines.launch
 import kotlin.math.min
 

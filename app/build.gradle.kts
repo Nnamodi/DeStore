@@ -73,6 +73,8 @@ dependencies {
 	implementation(libs.koin.core)
 
 	// other modules
+	implementation(project(path = ":domain"))
+	implementation(project(path = ":localDataSource"))
 	implementation(project(path = ":remoteDataSource"))
 
 	// test

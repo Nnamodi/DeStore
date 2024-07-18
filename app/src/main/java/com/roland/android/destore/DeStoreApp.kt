@@ -5,6 +5,8 @@ import com.roland.android.destore.ui.screen.cart.CartViewModel
 import com.roland.android.destore.ui.screen.details.DetailsViewModel
 import com.roland.android.destore.ui.screen.home.HomeViewModel
 import com.roland.android.destore.ui.screen.list.ListViewModel
+import com.roland.android.domain.di.DomainModule.domainModule
+import com.roland.android.localdatasource.di.PersistenceModule.persistenceModule
 import com.roland.android.remotedatasource.di.NetworkModule.remoteDataModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -20,7 +22,12 @@ class DeStoreApp : Application() {
 		startKoin {
 			androidContext(this@DeStoreApp)
 			androidLogger(Level.INFO)
-			modules(appModule, remoteDataModule)
+			modules(
+				appModule,
+				domainModule,
+				persistenceModule,
+				remoteDataModule
+			)
 		}
 	}
 

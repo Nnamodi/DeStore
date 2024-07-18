@@ -1,6 +1,6 @@
 package com.roland.android.destore.ui.screen.home
 
-import com.roland.android.remotedatasource.usecase.data.Item
+import com.roland.android.domain.data.Item
 
 sealed class HomeActions {
 

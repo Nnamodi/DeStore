@@ -9,10 +9,10 @@ import com.roland.android.destore.data.cartItemsFlow
 import com.roland.android.destore.data.favoriteItemsFlow
 import com.roland.android.destore.utils.Extensions.toCartItem
 import com.roland.android.destore.utils.ResponseConverter.convertToCategoryData
-import com.roland.android.remotedatasource.usecase.GetCategoryUseCase
-import com.roland.android.remotedatasource.usecase.data.CartItem
-import com.roland.android.remotedatasource.usecase.data.Item
-import com.roland.android.remotedatasource.utils.State
+import com.roland.android.domain.usecase.GetCategoryUseCase
+import com.roland.android.domain.data.CartItem
+import com.roland.android.domain.data.Item
+import com.roland.android.domain.data.State
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
