@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name">DeStore</string>
     <string name="retry">RETRY</string>
-    <string name="search">Search</string>
     <string name="good_morning">Good morning 👋🏽</string>
     <string name="good_afternoon">Good afternoon 👋🏽</string>
     <string name="good_evening">Good evening 👋🏽</string>
@@ -11,9 +10,10 @@
     <string name="back">Back</string>
     <string name="add_to_cart">Add to Cart</string>
     <string name="added_to_cart">\'%1$s\' added to Cart</string>
-    <string name="added_to_favorite">\'%1$s\' added to Favorite</string>
-    <string name="favorite">Add to Favorite</string>
-    <string name="unfavorite">Remove from Favorite</string>
+    <string name="added_to_wishlist">\'%1$s\' added to Wishlist</string>
+    <string name="removed_from_wishlist">\'%1$s\' removed from Wishlist</string>
+    <string name="add_to_wishlist">Add to Wishlist</string>
+    <string name="remove_from_wishlist">Remove from Wishlist</string>
     <string name="more_from">More from %1$s</string>
     <string name="black">Black</string>
     <string name="red">Red</string>
@@ -55,4 +55,17 @@
     <string name="nike">Nike</string>
     <string name="reebok">Reebok</string>
     <string name="timberland">Timberland</string>
+    <string name="order_history">Order History</string>
+    <string name="order_details">Order details</string>
+    <string name="order_number">Order number:</string>
+    <string name="order_date">Order date:</string>
+    <string name="order_cost">Cost of purchase:</string>
+    <string name="view_order_details">View order details</string>
+    <string name="no_orders_placed">You haven\'t placed any orders yet</string>
+    <string name="no_products">Not products here yet\nBut we will be adding some soon.</string>
+    <string name="jordan">Jordan</string>
+    <string name="puma">Puma</string>
+    <string name="wishlist">My Wishlist</string>
+    <string name="nothing_in_wishlist">Nothing in your wishlist.</string>
+    <string name="order_no">Order no: %1$s</string>
 </resources>

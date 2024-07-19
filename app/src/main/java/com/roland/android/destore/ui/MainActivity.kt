@@ -10,9 +10,11 @@ import com.roland.android.destore.ui.components.NavBar
 import com.roland.android.destore.ui.navigation.AppRoute
 import com.roland.android.destore.ui.navigation.NavActions
 import com.roland.android.destore.ui.screen.cart.CartViewModel
+import com.roland.android.destore.ui.screen.checkout.CheckoutViewModel
 import com.roland.android.destore.ui.screen.details.DetailsViewModel
 import com.roland.android.destore.ui.screen.home.HomeViewModel
 import com.roland.android.destore.ui.screen.list.ListViewModel
+import com.roland.android.destore.ui.screen.order_history.OrderHistoryViewModel
 import com.roland.android.destore.ui.theme.DeStoreTheme
 import org.koin.android.ext.android.inject
 
@@ -26,6 +28,8 @@ class MainActivity : ComponentActivity() {
 			val detailsViewModel: DetailsViewModel by inject()
 			val listViewModel: ListViewModel by inject()
 			val cartViewModel: CartViewModel by inject()
+			val checkoutViewModel: CheckoutViewModel by inject()
+			val orderHistoryViewModel: OrderHistoryViewModel by inject()
 
 			DeStoreTheme {
 				Scaffold(bottomBar = { NavBar(navController) }) { paddingValues ->
@@ -36,7 +40,9 @@ class MainActivity : ComponentActivity() {
 						homeViewModel = homeViewModel,
 						detailsViewModel = detailsViewModel,
 						listViewModel = listViewModel,
-						cartViewModel = cartViewModel
+						cartViewModel = cartViewModel,
+						checkoutViewModel = checkoutViewModel,
+						orderHistoryViewModel = orderHistoryViewModel
 					)
 				}
 			}

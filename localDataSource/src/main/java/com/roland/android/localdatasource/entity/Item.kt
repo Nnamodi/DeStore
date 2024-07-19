@@ -17,7 +17,6 @@ data class CartItemEntity(
 
 @Entity(tableName = "wishlist_item")
 data class WishlistItemEntity(
-	@PrimaryKey(autoGenerate = true)
-	val generatedId: Int = 0,
+	@PrimaryKey
 	val itemId: String = ""
 )

@@ -3,18 +3,21 @@
 package com.roland.android.destore.ui.components
 
 import android.annotation.SuppressLint
-import android.widget.Toast
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.CardTravel
+import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material.icons.rounded.History
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.LocalMall
-import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
@@ -25,7 +28,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -34,10 +36,10 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.roland.android.destore.R
 import com.roland.android.destore.ui.navigation.AppRoute
 import com.roland.android.destore.ui.navigation.Screens
+import com.roland.android.destore.utils.Extensions.WISHLIST
 
 @Composable
-fun HomeAppBar() {
-	val context = LocalContext.current
+fun HomeAppBar(navigate: (Screens) -> Unit) {
 	TopAppBar(
 		title = {
 			Text(
@@ -46,10 +48,12 @@ fun HomeAppBar() {
 			)
 		},
 		actions = {
-			IconButton(onClick = {
-				Toast.makeText(context, "Coming Soon", Toast.LENGTH_SHORT).show()
-			}) {
-				Icon(Icons.Rounded.Search, stringResource(R.string.search))
+			IconButton(onClick = { navigate(Screens.OrderHistoryScreen) }) {
+				Icon(Icons.Rounded.History, stringResource(R.string.order_history), tint = colorScheme.onBackground)
+			}
+			val wishlist = stringResource(R.string.wishlist)
+			IconButton(onClick = { navigate(Screens.ListScreen(WISHLIST, wishlist)) }) {
+				Icon(Icons.Rounded.Favorite, wishlist, tint = colorScheme.onBackground)
 			}
 		}
 	)
@@ -75,14 +79,17 @@ fun DetailsAppBar(navigate: (Screens) -> Unit) {
 fun TopAppBar(
 	title: String,
 	navigate: (Screens) -> Unit,
-	showBackButton: Boolean = true
+	showBackButton: Boolean = true,
+	subTitle: String? = null
 ) {
 	TopAppBar(
 		title = {
-			Text(
-				text = title,
-				fontWeight = FontWeight.Bold
-			)
+			Column {
+				Text(text = title, fontWeight = FontWeight.Bold)
+				subTitle?.let {
+					Text(it, style = MaterialTheme.typography.labelMedium)
+				}
+			}
 		},
 		navigationIcon = {
 			if (showBackButton) {

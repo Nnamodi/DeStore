@@ -22,9 +22,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.roland.android.destore.R
@@ -68,8 +70,10 @@ fun LoadingScreen(
 
 @Composable
 fun EmptyScreen(
-	paddingValues: PaddingValues,
-	modifier: Modifier = Modifier
+	modifier: Modifier = Modifier,
+	displayText: String = stringResource(R.string.cart_is_empty),
+	displayIcon: ImageVector = Icons.Rounded.ShoppingCart,
+	paddingValues: PaddingValues
 ) {
 	Column(
 		modifier = modifier
@@ -81,8 +85,8 @@ fun EmptyScreen(
 		horizontalAlignment = Alignment.CenterHorizontally
 	) {
 		Icon(
-			imageVector = Icons.Rounded.ShoppingCart,
-			contentDescription = stringResource(R.string.cart_is_empty),
+			imageVector = displayIcon,
+			contentDescription = displayText,
 			modifier = Modifier
 				.padding(bottom = 20.dp)
 				.size(100.dp)
@@ -90,10 +94,11 @@ fun EmptyScreen(
 				.alpha(0.7f)
 		)
 		Text(
-			text = stringResource(R.string.cart_is_empty),
+			text = displayText,
 			fontSize = 24.sp,
 			fontStyle = FontStyle.Italic,
-			fontWeight = FontWeight.Medium
+			fontWeight = FontWeight.Medium,
+			textAlign = TextAlign.Center
 		)
 	}
 }

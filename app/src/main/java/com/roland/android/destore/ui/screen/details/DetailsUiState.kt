@@ -8,7 +8,7 @@ data class DetailsUiState(
 	val details: State<ItemDetails>? = null,
 	val moreInStore: State<List<Item>>? = null,
 	val category: String = "",
-	val favorited: Boolean = false,
+	val wishlisted: Boolean = false,
 	val numberInCart: Int = 0,
-	val favoriteItems: List<Item> = emptyList()
+	val wishlistItems: List<Item> = emptyList()
 )

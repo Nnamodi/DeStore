@@ -74,9 +74,6 @@ import com.roland.android.domain.data.State
 import kotlinx.coroutines.launch
 import kotlin.math.min
 
-typealias ColorValue = Long
-typealias Size = Int
-
 @Composable
 fun DetailsScreen(
 	uiState: DetailsUiState,
@@ -88,6 +85,8 @@ fun DetailsScreen(
 	val layoutDirection = LocalLayoutDirection.current
 	val context = LocalContext.current
 	val scope = rememberCoroutineScope()
+	var selectedSize by rememberSaveable { mutableStateOf(Sizes.entries.random()) }
+	var selectedColor by rememberSaveable { mutableStateOf(Colors.entries.random()) }
 
 	Scaffold(
 		topBar = { DetailsAppBar(navigate) },
@@ -108,8 +107,8 @@ fun DetailsScreen(
 				actions(
 					AddToCart(
 						item = details.toItem(itemPrice),
-						color = Colors.entries.random().color.value.toLong(),
-						size = Sizes.entries.random().value
+						color = selectedColor.color.value.toLong(),
+						size = selectedSize.value
 					)
 				)
 			}
@@ -128,17 +127,17 @@ fun DetailsScreen(
 						Description(
 							item = details,
 							itemPrice = itemPrice,
-							isFavorite = uiState.favorited,
+							isFavorite = uiState.wishlisted,
 							onFavorite = {
 								scope.launch {
 									snackbarHostState.showSnackbar(
 										context.getString(
-											R.string.added_to_favorite,
+											if (uiState.wishlisted) R.string.removed_from_wishlist else R.string.added_to_wishlist,
 											it.name
 										)
 									)
 								}
-								actions(Favorite(it.toItem(itemPrice), !uiState.favorited))
+								actions(Favorite(it.toItem(itemPrice), !uiState.wishlisted))
 							}
 						)
 					}
@@ -146,11 +145,17 @@ fun DetailsScreen(
 					item {
 						Selection(
 							numberInCart = uiState.numberInCart,
-							addToCart = { colorValue, size ->
-								actions(AddToCart(details.toItem(itemPrice), colorValue, size))
-							},
-							removeFromCart = { colorValue, size ->
-								actions(RemoveFromCart(details.toItem(itemPrice), colorValue, size))
+							selectedSize = selectedSize,
+							selectedColor = selectedColor,
+							onSelectSize = { selectedSize = it },
+							onSelectColor = { selectedColor = it },
+							addToCart = { addToCart() },
+							removeFromCart = {
+								actions(RemoveFromCart(
+									details.toItem(itemPrice),
+									selectedColor.color.value.toLong(),
+									selectedSize.value
+								))
 							}
 						)
 					}
@@ -169,10 +174,10 @@ fun DetailsScreen(
 							GroupedVerticalGrid(
 								header = stringResource(R.string.more_from, details.categories[0].name),
 								gridItems = moreInStore,
-								favoriteItems = uiState.favoriteItems,
+								favoriteItems = uiState.wishlistItems,
 								numberOfRows = min(2, moreInStore.size),
 								snackbarHostState = snackbarHostState,
-								onFavorite = { actions(Favorite(it, !uiState.favorited)) },
+								onFavorite = { actions(Favorite(it, !it.isFavorite(uiState.wishlistItems))) },
 								addToCart = { addToCart() },
 								onItemClick = { id, price ->
 									navigate(Screens.DetailsScreen(id, price))
@@ -290,12 +295,13 @@ private fun Description(
 private fun Selection(
 	modifier: Modifier = Modifier,
 	numberInCart: Int,
-	addToCart: (ColorValue, Size) -> Unit,
-	removeFromCart: (ColorValue, Size) -> Unit,
+	selectedSize: Sizes,
+	selectedColor: Colors,
+	onSelectSize: (Sizes) -> Unit,
+	onSelectColor: (Colors) -> Unit,
+	addToCart: () -> Unit,
+	removeFromCart: () -> Unit,
 ) {
-	var selectedSize by rememberSaveable { mutableStateOf(Sizes.entries.random()) }
-	var selectedColor by rememberSaveable { mutableStateOf(Colors.entries.random()) }
-
 	Column(modifier.padding(horizontal = 16.dp)) {
 		SelectionBox(
 			header = stringResource(R.string.size),
@@ -310,7 +316,7 @@ private fun Selection(
 					SizeBox(
 						size = size,
 						selected = size == selectedSize,
-						onSelect = { selectedSize = it }
+						onSelect = onSelectSize
 					)
 				}
 			}
@@ -328,7 +334,7 @@ private fun Selection(
 					ColorBox(
 						color = color,
 						selected = color == selectedColor,
-						onSelect = { selectedColor = it }
+						onSelect = onSelectColor
 					)
 				}
 			}
@@ -339,19 +345,9 @@ private fun Selection(
 		) {
 			QuantityButton(
 				itemSize = numberInCart.toString(),
-				inCheckoutScreen = false,
-				add = {
-					addToCart(
-						selectedColor.color.value.toLong(),
-						selectedSize.value
-					)
-				},
-				remove = {
-					removeFromCart(
-						selectedColor.color.value.toLong(),
-						selectedSize.value
-					)
-				}
+				canModifyCart = true,
+				add = addToCart,
+				remove = removeFromCart
 			)
 		}
 	}

@@ -75,7 +75,9 @@ import com.roland.android.destore.utils.Extensions.transformList
 import com.roland.android.domain.data.Item
 import com.roland.android.domain.Constant.ADDIDAS_CATEGORY
 import com.roland.android.domain.Constant.FEATURED_CATEGORY
+import com.roland.android.domain.Constant.JORDAN_CATEGORY
 import com.roland.android.domain.Constant.NIKE_CATEGORY
+import com.roland.android.domain.Constant.PUMA_CATEGORY
 import com.roland.android.domain.Constant.REEBOK_CATEGORY
 import com.roland.android.domain.Constant.TIMBERLAND_CATEGORY
 import com.roland.android.domain.data.State
@@ -98,7 +100,7 @@ fun HomeScreen(
 	val layoutDirection = LocalLayoutDirection.current
 
 	Scaffold(
-		topBar = { HomeAppBar() },
+		topBar = { HomeAppBar(navigate) },
 		snackbarHost = { SnackbarHost(snackbarHostState) }
 	) { paddingValues ->
 		CommonScreen(
@@ -181,11 +183,11 @@ fun HomeScreen(
 					GroupedVerticalGrid(
 						header = stringResource(R.string.our_special_offers),
 						gridItems = data.specialOffers,
-						favoriteItems = uiState.favoriteItems,
+						favoriteItems = uiState.wishlistItems,
 						showOriginalPrice = true,
 						numberOfRows = 2,
 						snackbarHostState = snackbarHostState,
-						onFavorite = { actions(HomeActions.Favorite(it, !it.isFavorite(uiState.favoriteItems))) },
+						onFavorite = { actions(HomeActions.Favorite(it, !it.isFavorite(uiState.wishlistItems))) },
 						addToCart = { actions(HomeActions.AddToCart(it)) },
 						onItemClick = { id, price ->
 							navigate(Screens.DetailsScreen(id, price))
@@ -197,10 +199,10 @@ fun HomeScreen(
 					GroupedVerticalGrid(
 						header = stringResource(R.string.featured),
 						gridItems = data.featured,
-						favoriteItems = uiState.favoriteItems,
+						favoriteItems = uiState.wishlistItems,
 						numberOfRows = 3,
 						snackbarHostState = snackbarHostState,
-						onFavorite = { actions(HomeActions.Favorite(it, !it.isFavorite(uiState.favoriteItems))) },
+						onFavorite = { actions(HomeActions.Favorite(it, !it.isFavorite(uiState.wishlistItems))) },
 						addToCart = { actions(HomeActions.AddToCart(it)) },
 						onItemClick = { id, price ->
 							navigate(Screens.DetailsScreen(id, price))
@@ -355,7 +357,7 @@ private fun CategoryList(
 	modifier: Modifier = Modifier,
 	navigate: (CategoryId, CategoryName) -> Unit
 ) {
-	val categories = Categories.entries.transformList()
+	val categories = Categories.entries.transformList(numberInRow = 3)
 
 	Column(modifier.fillMaxWidth()) {
 		repeat(categories.size) { baseIndex ->
@@ -398,7 +400,9 @@ private enum class Categories(
 	val categoryId: String,
 ) {
 	Addidas(R.string.addidas, R.drawable.addidas_logo, ADDIDAS_CATEGORY),
+	Jordan(R.string.jordan, R.drawable.jordan_logo, JORDAN_CATEGORY),
 	Nike(R.string.nike, R.drawable.nike_logo, NIKE_CATEGORY),
+	Puma(R.string.puma, R.drawable.puma_logo, PUMA_CATEGORY),
 	Reebok(R.string.reebok, R.drawable.reebok_logo, REEBOK_CATEGORY),
 	Timberland(R.string.timberland, R.drawable.timberland_logo, TIMBERLAND_CATEGORY)
 }

@@ -9,7 +9,10 @@ import com.roland.android.domain.data.Item
 import com.roland.android.domain.data.ItemDetails
 import java.math.BigDecimal
 import java.math.RoundingMode
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 object Extensions {
 
@@ -56,15 +59,20 @@ object Extensions {
 		size = size
 	)
 
-	fun <T> List<T>.transformList(): List<List<T>> {
+	fun <T> List<T>.transformList(numberInRow: Int = 2): List<List<T>> {
 		var i = 0
 		val list = mutableListOf<List<T>>()
 		while (i < size) {
 			val tList = mutableListOf<T>()
 			tList.add(this[i])
 			if (i + 1 < size) { tList.add(this[i + 1]) }
+			if (i + 2 < size && numberInRow == 3) { tList.add(this[i + 2]) }
 			list.add(tList.toList())
-			i += if (i + 1 < size) 2 else 1
+			i += when {
+				i + 2 < size && numberInRow == 3 -> 3
+				i + 1 < size -> 2
+				else -> 1
+			}
 		}
 		return list.toList()
 	}
@@ -75,5 +83,12 @@ object Extensions {
 				it.color == item.color &&
 					it.size == item.size
 		}
+
+	fun Date.formatDate(): String {
+		val style = SimpleDateFormat("MMM dd, yyyy hh:mma", Locale.getDefault())
+		return style.format(this)
+	}
+
+	const val WISHLIST = "wishlist"
 
 }

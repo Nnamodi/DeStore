@@ -5,11 +5,12 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.roland.android.localdatasource.entity.CartItemEntity
 import com.roland.android.localdatasource.entity.OrderEntity
+import com.roland.android.localdatasource.entity.OrderItemEntity
 import com.roland.android.localdatasource.entity.WishlistItemEntity
 import com.roland.android.localdatasource.utils.TypeConverter
 
 @Database(
-	entities = [CartItemEntity::class, OrderEntity::class, WishlistItemEntity::class],
+	entities = [CartItemEntity::class, OrderEntity::class, OrderItemEntity::class, WishlistItemEntity::class],
 	version = 1
 )
 @TypeConverters(TypeConverter::class)

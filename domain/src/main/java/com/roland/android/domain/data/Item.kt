@@ -17,6 +17,7 @@ data class Item(
 }
 
 data class CartItem(
+	var generatedId: Int = 0,
 	val id: String = "",
 	val name: String = "",
 	val photo: Image = Image(),

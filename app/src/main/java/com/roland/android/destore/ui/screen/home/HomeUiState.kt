@@ -6,7 +6,7 @@ import com.roland.android.domain.data.State
 data class HomeUiState(
 	val data: State<HomeDataModel>? = null,
 	val userInfo: String = "Nnamdi Igede",
-	val favoriteItems: List<Item> = emptyList(),
+	val wishlistItems: List<Item> = emptyList(),
 )
 
 data class HomeDataModel(

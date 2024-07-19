@@ -10,6 +10,4 @@ sealed class CartActions {
 
 	data class RemoveFromCart(val item: CartItem) : CartActions()
 
-	data object Checkout : CartActions()
-
 }

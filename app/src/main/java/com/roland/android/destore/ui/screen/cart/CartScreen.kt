@@ -39,6 +39,7 @@ fun CartScreen(
 				CartItems(
 					cartItems = cartItems,
 					paddingValues = paddingValues,
+					screen = AppRoute.CartScreen,
 					add = { actions(CartActions.Add(it))},
 					remove = { actions(CartActions.Remove(it))},
 					removeFromCart = { actions(CartActions.RemoveFromCart(it)) },
@@ -55,7 +56,7 @@ fun CartScreen(
 				)
 			}
 		} else {
-			EmptyScreen(paddingValues)
+			EmptyScreen(paddingValues = paddingValues)
 		}
 	}
 }

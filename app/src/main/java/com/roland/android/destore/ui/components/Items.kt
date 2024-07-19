@@ -43,6 +43,7 @@ import coil.compose.AsyncImagePainter
 import coil.compose.AsyncImagePainter.State.Empty
 import coil.request.ImageRequest
 import com.roland.android.destore.R
+import com.roland.android.destore.ui.navigation.AppRoute
 import com.roland.android.destore.utils.Extensions.getColor
 import com.roland.android.destore.utils.Extensions.round
 import com.roland.android.destore.utils.painterPlaceholder
@@ -121,13 +122,16 @@ fun Product(
 fun CartItem(
 	item: CartItem,
 	modifier: Modifier = Modifier,
-	inCheckoutScreen: Boolean,
+	screen: AppRoute,
 	numberInCart: Int,
 	add: (CartItem) -> Unit,
 	remove: (CartItem) -> Unit,
 	removeFromCart: (CartItem) -> Unit,
 	viewDetails: (ItemId, ItemPrice) -> Unit
 ) {
+	val inCheckoutScreen = screen is AppRoute.CheckoutScreen
+	val inCartScreen = screen is AppRoute.CartScreen
+
 	Row(
 		modifier = modifier
 			.fillMaxWidth()
@@ -148,10 +152,9 @@ fun CartItem(
 			modifier = Modifier.clip(shapes.extraLarge)
 		)
 		Column(Modifier.padding(start = 10.dp)) {
-			Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-				Text(text = item.name)
-				Spacer(Modifier.weight(1f))
-				if (!inCheckoutScreen) {
+			Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.Bottom) {
+				Text(text = item.name, modifier = Modifier.weight(1f))
+				if (inCartScreen) {
 					IconButton(onClick = { removeFromCart(item) }) {
 						Icon(
 							imageVector = Icons.Rounded.Clear,
@@ -190,7 +193,7 @@ fun CartItem(
 			Row(verticalAlignment = Alignment.CenterVertically) {
 				QuantityButton(
 					itemSize = numberInCart.toString(),
-					inCheckoutScreen = inCheckoutScreen,
+					canModifyCart = inCartScreen,
 					add = { add(item) },
 					remove = { remove(item) }
 				)

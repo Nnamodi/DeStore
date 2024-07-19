@@ -12,14 +12,13 @@ import com.roland.android.destore.ui.components.FixedBottomButton
 import com.roland.android.destore.ui.components.TopAppBar
 import com.roland.android.destore.ui.navigation.AppRoute
 import com.roland.android.destore.ui.navigation.Screens
-import com.roland.android.destore.ui.screen.cart.CartActions
 import com.roland.android.destore.ui.theme.DeStoreTheme
 import com.roland.android.domain.data.CartItem
 
 @Composable
 fun CheckoutScreen(
 	uiState: CheckoutUiState,
-	actions: (CartActions) -> Unit,
+	actions: (CheckoutActions) -> Unit,
 	navigate: (Screens) -> Unit
 ) {
 	val cartItems = uiState.cartItems
@@ -31,11 +30,8 @@ fun CheckoutScreen(
 			CartItems(
 				cartItems = cartItems,
 				paddingValues = paddingValues,
-				inCheckoutScreen = true,
+				screen = AppRoute.CheckoutScreen,
 				userInfo = uiState.userInfo,
-				add = { actions(CartActions.Add(it))},
-				remove = { actions(CartActions.Remove(it))},
-				removeFromCart = { actions(CartActions.RemoveFromCart(it)) },
 				backToCart = { navigate(Screens.Back) },
 				viewDetails = { id, price ->
 					navigate(Screens.DetailsScreen(id, price))
@@ -44,7 +40,7 @@ fun CheckoutScreen(
 			FixedBottomButton(
 				screen = AppRoute.CheckoutScreen,
 				buttonText = stringResource(R.string.proceed),
-				onButtonClick = { actions(CartActions.Checkout) },
+				onButtonClick = { actions(CheckoutActions.Checkout) },
 				navigate = navigate
 			)
 		}

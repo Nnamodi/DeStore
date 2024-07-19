@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.CardTravel
 import androidx.compose.material.icons.rounded.Done
+import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -113,8 +114,8 @@ fun FavoriteIconButton(
 		)
 	) {
 		Icon(
-			imageVector = Icons.Rounded.FavoriteBorder,
-			contentDescription = stringResource(if (itemIsFavorite) R.string.favorite else R.string.unfavorite),
+			imageVector = if (itemIsFavorite) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
+			contentDescription = stringResource(if (itemIsFavorite) R.string.add_to_wishlist else R.string.remove_from_wishlist),
 			tint = Color.White,
 		)
 	}
@@ -123,7 +124,7 @@ fun FavoriteIconButton(
 @Composable
 fun QuantityButton(
 	itemSize: String,
-	inCheckoutScreen: Boolean,
+	canModifyCart: Boolean,
 	add: () -> Unit,
 	remove: () -> Unit
 ) {
@@ -131,10 +132,10 @@ fun QuantityButton(
 		modifier = Modifier
 			.clip(shape = shapes.medium)
 			.background(colorScheme.onBackground.copy(alpha = 0.1f))
-			.padding(horizontal = if (inCheckoutScreen) 0.dp else 6.dp),
+			.padding(horizontal = if (canModifyCart) 6.dp else 0.dp),
 		verticalAlignment = Alignment.CenterVertically
 	) {
-		if (!inCheckoutScreen) {
+		if (canModifyCart) {
 			Text(
 				text = "—",
 				modifier = Modifier
@@ -146,12 +147,12 @@ fun QuantityButton(
 		Text(
 			text = itemSize,
 			modifier = Modifier
-				.padding(if (inCheckoutScreen) 0.dp else 4.dp)
+				.padding(if (canModifyCart) 4.dp else 0.dp)
 				.clip(shape = shapes.medium)
 				.background(colorScheme.onBackground.copy(alpha = 0.1f))
 				.padding(8.dp, 4.dp)
 		)
-		if (!inCheckoutScreen) {
+		if (canModifyCart) {
 			Text(
 				text = "+",
 				modifier = Modifier

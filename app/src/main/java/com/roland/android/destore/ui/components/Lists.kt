@@ -44,12 +44,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.roland.android.destore.R
-import com.roland.android.domain.data.UserInfo
+import com.roland.android.destore.ui.navigation.AppRoute
+import com.roland.android.destore.ui.screen.order_history.Info
 import com.roland.android.destore.ui.theme.SkyBlue
+import com.roland.android.destore.utils.Extensions.filterCartItems
 import com.roland.android.destore.utils.Extensions.round
 import com.roland.android.destore.utils.Extensions.transformList
 import com.roland.android.domain.data.CartItem
 import com.roland.android.domain.data.Item
+import com.roland.android.domain.data.UserInfo
 import kotlinx.coroutines.launch
 
 @Composable
@@ -81,14 +84,15 @@ fun VerticalGrid(
 			contentPadding = PaddingValues(bottom = 100.dp)
 		) {
 			items(items.size) { index ->
+				val item = items[index]
 				Product(
-					item = items[index],
+					item = item,
 					favoriteItems = favoriteItems,
 					favorite = {
 						scope.launch {
 							snackbarHostState.showSnackbar(
 								context.getString(
-									R.string.added_to_favorite,
+									if (item.isFavorite(favoriteItems)) R.string.removed_from_wishlist else R.string.added_to_wishlist,
 									it.name
 								)
 							)
@@ -152,7 +156,7 @@ fun GroupedVerticalGrid(
 						scope.launch {
 							snackbarHostState.showSnackbar(
 								context.getString(
-									R.string.added_to_favorite,
+									if (item[0].isFavorite(favoriteItems)) R.string.removed_from_wishlist else R.string.added_to_wishlist,
 									it.name
 								)
 							)
@@ -182,7 +186,7 @@ fun GroupedVerticalGrid(
 							scope.launch {
 								snackbarHostState.showSnackbar(
 									context.getString(
-										R.string.added_to_favorite,
+										if (item[1].isFavorite(favoriteItems)) R.string.removed_from_wishlist else R.string.added_to_wishlist,
 										it.name
 									)
 								)
@@ -215,7 +219,9 @@ fun CartItems(
 	cartItems: List<CartItem>,
 	modifier: Modifier = Modifier,
 	paddingValues: PaddingValues,
-	inCheckoutScreen: Boolean = false,
+	screen: AppRoute,
+	dateOfPurchase: String = "",
+	purchaseAmount: String = "",
 	userInfo: UserInfo = UserInfo(),
 	add: (CartItem) -> Unit = {},
 	remove: (CartItem) -> Unit = {},
@@ -225,6 +231,7 @@ fun CartItems(
 ) {
 	val layoutDirection = LocalLayoutDirection.current
 	val items = cartItems.toSet().toList()
+	val inCheckoutScreen = screen is AppRoute.CheckoutScreen
 
 	LazyColumn(
 		modifier = modifier.fillMaxSize(),
@@ -235,6 +242,20 @@ fun CartItems(
 			bottom = 100.dp
 		)
 	) {
+		item {
+			if (screen is AppRoute.OrderDetailsScreen) {
+				Column(Modifier.padding(16.dp)) {
+					Info(
+						title = stringResource(R.string.order_date),
+						detail = dateOfPurchase
+					)
+					Info(
+						title = stringResource(R.string.order_cost),
+						detail = purchaseAmount
+					)
+				}
+			}
+		}
 		item {
 			if (inCheckoutScreen) {
 				SmallHeader(
@@ -250,12 +271,8 @@ fun CartItems(
 			CartItem(
 				item = item,
 				modifier = Modifier.animateItemPlacement(),
-				inCheckoutScreen = inCheckoutScreen,
-				numberInCart = cartItems.filter {
-					it.id == item.id &&
-						it.color == item.color &&
-							it.size == item.size
-				}.size,
+				screen = screen,
+				numberInCart = cartItems.filterCartItems(item).size,
 				add = add,
 				remove = remove,
 				removeFromCart = removeFromCart,
@@ -266,6 +283,7 @@ fun CartItems(
 			item {
 				Container(
 					header = stringResource(R.string.personal_information),
+					showNavigateButton = false,
 					navigate = {}
 				) {
 					Column {
@@ -281,6 +299,7 @@ fun CartItems(
 			item {
 				Container(
 					header = stringResource(R.string.delivery_option),
+					showNavigateButton = false,
 					navigate = {}
 				) {
 					Row(Modifier.fillMaxWidth()) {

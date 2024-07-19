@@ -11,10 +11,11 @@ class NavActions(private val navController: NavHostController) {
 			is Screens.DetailsScreen -> navigateToDetailsScreen(screen.itemId, screen.itemPrice)
 			is Screens.ListScreen -> navigateToListScreen(screen.categoryId, screen.categoryName)
 			Screens.AllProductsScreen -> navigateToAllProductsScreen()
-			Screens.SearchScreen -> {}
 			Screens.CartScreen -> navigateToCartScreen()
 			Screens.CheckoutScreen -> navigateToCheckoutScreen()
 			Screens.OrderCompleteScreen -> navigateToOrderCompleteScreen()
+			Screens.OrderHistoryScreen -> navigateToOrderHistoryScreen()
+			is Screens.OrderDetailsScreen -> navigateToOrderDetailsScreen(screen.orderNo)
 			Screens.Back -> navigateUp()
 		}
 	}
@@ -57,6 +58,16 @@ class NavActions(private val navController: NavHostController) {
 		navController.navigate(AppRoute.OrderCompleteScreen.route)
 	}
 
+	private fun navigateToOrderHistoryScreen() {
+		navController.navigate(AppRoute.OrderHistoryScreen.route)
+	}
+
+	private fun navigateToOrderDetailsScreen(orderNo: String) {
+		navController.navigate(
+			AppRoute.OrderDetailsScreen.routeWithId(orderNo)
+		)
+	}
+
 	@SuppressLint("RestrictedApi")
 	private fun navigateUp() {
 		val navBackStackEntry = navController.currentBackStack.value
@@ -85,6 +96,10 @@ sealed class AppRoute(val route: String) {
 	data object CartScreen: AppRoute("cart_screen")
 	data object CheckoutScreen: AppRoute("checkout_screen")
 	data object OrderCompleteScreen: AppRoute("order_complete_screen")
+	data object OrderHistoryScreen: AppRoute("order_history_screen")
+	data object OrderDetailsScreen: AppRoute("order_details_screen/{order_no}") {
+		fun routeWithId(orderNo: String) = String.format("order_details_screen/%s", orderNo)
+	}
 }
 
 sealed class Screens {
@@ -92,9 +107,10 @@ sealed class Screens {
 	data class DetailsScreen(val itemId: String, val itemPrice: String) : Screens()
 	data object AllProductsScreen : Screens()
 	data class ListScreen(val categoryId: String, val categoryName: String) : Screens()
-	data object SearchScreen : Screens()
 	data object CartScreen : Screens()
 	data object CheckoutScreen : Screens()
 	data object OrderCompleteScreen : Screens()
+	data object OrderHistoryScreen : Screens()
+	data class OrderDetailsScreen(val orderNo: String) : Screens()
 	data object Back : Screens()
 }

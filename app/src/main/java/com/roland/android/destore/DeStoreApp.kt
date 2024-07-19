@@ -2,9 +2,11 @@ package com.roland.android.destore
 
 import android.app.Application
 import com.roland.android.destore.ui.screen.cart.CartViewModel
+import com.roland.android.destore.ui.screen.checkout.CheckoutViewModel
 import com.roland.android.destore.ui.screen.details.DetailsViewModel
 import com.roland.android.destore.ui.screen.home.HomeViewModel
 import com.roland.android.destore.ui.screen.list.ListViewModel
+import com.roland.android.destore.ui.screen.order_history.OrderHistoryViewModel
 import com.roland.android.domain.di.DomainModule.domainModule
 import com.roland.android.localdatasource.di.PersistenceModule.persistenceModule
 import com.roland.android.remotedatasource.di.NetworkModule.remoteDataModule
@@ -38,4 +40,6 @@ private val appModule = module {
 	viewModel { DetailsViewModel() }
 	viewModel { ListViewModel() }
 	viewModel { CartViewModel() }
+	viewModel { CheckoutViewModel() }
+	viewModel { OrderHistoryViewModel() }
 }
