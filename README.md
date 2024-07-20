@@ -1,12 +1,12 @@
 # DeStore
-This sample shopping app is a task from HNG11 stage 3.
+This sample shopping app is a task from HNG11 stage 3 & 4.
 
 A modification of [Outlet project](https://github.com/Nnamodi/Outlet)
 
 ## Screenshots
-|::::::::::::::::::::::::::::::::::::::::|::::::::::::::::::::::::::::::::::::::::|::::::::::::::::::::::::::::::::::::::::|::::::::::::::::::::::::::::::::::::::::|::::::::::::::::::::::::::::::::::::::::|
-|:--:|:--:|:--:|:--:|:--:|
-|![Home screen](screenshots/home_screen.png)|![Details screen](screenshots/details_screen.png)|![List screen](screenshots/list_screen.png)|![Cart screen](screenshots/cart_screen.png)|![Checkout screen](screenshots/checkout_screen.png)|
+|::::::::::::::::::::::::::::::::::::::::|::::::::::::::::::::::::::::::::::::::::|::::::::::::::::::::::::::::::::::::::::|::::::::::::::::::::::::::::::::::::::::|::::::::::::::::::::::::::::::::::::::::|::::::::::::::::::::::::::::::::::::::::|
+|:--:|:--:|:--:|:--:|:--:|:--:|
+|![Home screen](screenshots/home_screen.png)|![Details screen](screenshots/details_screen.png)|![List screen](screenshots/list_screen.png)|![Cart screen](screenshots/cart_screen.png)|![Checkout screen](screenshots/checkout_screen.png)|![Order History screen](screenshots/order_history_screen.png)|
 
 ## Features
 * Shows list of products fetched from remote source
@@ -15,6 +15,7 @@ A modification of [Outlet project](https://github.com/Nnamodi/Outlet)
 * Requires internet connection
 * Add to and remove from cart
 * Handles error state properly
+* Saves and displays order history in details
 
 ## About
 
@@ -27,14 +28,18 @@ A modification of [Outlet project](https://github.com/Nnamodi/Outlet)
 
     `app` - The main module serving as the user interface/communication layer
 
-    `dataRemoteSource` - Fetches data from internet and manipulates it
+    `domain` - Houses the entities and use-cases
+
+    `localDataSource` - Stores and fetches stored data (like cart items, wishlist, order history), from local source using persistence frameworks
+
+    `remoteDataSource` - Fetches data from internet and manipulates it
 <br/>
 
-  ***Explore the virtualized demonstration of the release apk version [here](https://appetize.io/app/b_6v5wfgmpqj2ki25p2enwbra4py)***
+  ***Explore the virtualized demonstration of the release apk version [here](https://appetize.io/app/b_lu3o26f6m4b6dgdyig7ghwejuu)***
 
   ***Or you can install the apk from below 👇🏽***
 
-  [![DeStore App](https://img.shields.io/badge/DeStore-APK-orange.svg?style=for-the-badge&logo=android)](https://github.com/Nnamodi/DeStore/releases/download/v1.0/app-release.apk)
+  [![DeStore App](https://img.shields.io/badge/DeStore-APK-orange.svg?style=for-the-badge&logo=android)](https://github.com/Nnamodi/DeStore/releases/download/v2.0/app-release.apk)
 
 ## Build Instructions
 You can build the app via Android Studio, or by running the following command in your directory:
@@ -53,3 +58,4 @@ You can build the app via Android Studio, or by running the following command in
 * [Retrofit](https://square.github.io/retrofit) - A type-safe HTTP client for Android and Java.
 * [Moshi](https://sqaure.github.io/moshi) - A modern JSON library for Kotlin and Java.
 * [OkHttp](https://sqaure.github.io/okhttp) - An efficient HTTP & HTTP/2 client for Android and Java.
+* [Room Database](https://developer.android.com/training/data-storage/room) - A persistent local data storage library.

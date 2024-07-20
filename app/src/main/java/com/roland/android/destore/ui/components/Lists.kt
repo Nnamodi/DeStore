@@ -230,7 +230,7 @@ fun CartItems(
 	viewDetails: (ItemId, ItemPrice) -> Unit = { _, _ ->}
 ) {
 	val layoutDirection = LocalLayoutDirection.current
-	val items = cartItems.toSet().toList()
+	val items = cartItems.distinctBy { it.id } // will refactor this line for better experience on cart screen.
 	val inCheckoutScreen = screen is AppRoute.CheckoutScreen
 
 	LazyColumn(

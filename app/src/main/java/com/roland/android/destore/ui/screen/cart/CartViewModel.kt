@@ -1,6 +1,5 @@
 package com.roland.android.destore.ui.screen.cart
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -34,7 +33,6 @@ class CartViewModel : ViewModel(), KoinComponent {
 			cartItemsFlow.collect { items ->
 				cartItems = items
 				_cartUiState.update { it.copy(cartItems = cartItems) }
-				Log.i("LocalData", "From cart: $items")
 			}
 		}
 		viewModelScope.launch {
@@ -86,7 +84,6 @@ class CartViewModel : ViewModel(), KoinComponent {
 
 	private fun remove(item: CartItem) {
 		val itemsInCart = cartItems.filterCartItems(item)
-		Log.i("LocalData", "Remove: $itemsInCart\n$cartItems")
 		viewModelScope.launch {
 			cartUseCase.execute(
 				CartUseCase.Request(
