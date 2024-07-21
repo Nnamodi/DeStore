@@ -24,7 +24,7 @@ A modification of [Outlet project](https://github.com/Nnamodi/Outlet)
 
 * This project was built with Clean Architecture and MVVM pattern.
 
-    There are two _modules_ in this project:
+    There are four _modules_ in this project:
 
     `app` - The main module serving as the user interface/communication layer
 
