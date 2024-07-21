@@ -39,7 +39,7 @@ A modification of [Outlet project](https://github.com/Nnamodi/Outlet)
 
   ***Or you can install the apk from below 👇🏽***
 
-  [![DeStore App](https://img.shields.io/badge/DeStore-APK-orange.svg?style=for-the-badge&logo=android)](https://github.com/Nnamodi/DeStore/releases/download/v2.0/app-release.apk)
+  [![DeStore App](https://img.shields.io/badge/DeStore-APK-orange.svg?style=for-the-badge&logo=android)](https://github.com/Nnamodi/DeStore/releases/download/v2.0/app-release_v2.apk)
 
 ## Build Instructions
 You can build the app via Android Studio, or by running the following command in your directory:
