@@ -72,7 +72,6 @@ import com.roland.android.destore.ui.theme.Red
 import com.roland.android.destore.ui.theme.SkyBlue
 import com.roland.android.destore.utils.Extensions.greetings
 import com.roland.android.destore.utils.Extensions.transformList
-import com.roland.android.domain.data.Item
 import com.roland.android.domain.Constant.ADDIDAS_CATEGORY
 import com.roland.android.domain.Constant.FEATURED_CATEGORY
 import com.roland.android.domain.Constant.JORDAN_CATEGORY
@@ -80,6 +79,7 @@ import com.roland.android.domain.Constant.NIKE_CATEGORY
 import com.roland.android.domain.Constant.PUMA_CATEGORY
 import com.roland.android.domain.Constant.REEBOK_CATEGORY
 import com.roland.android.domain.Constant.TIMBERLAND_CATEGORY
+import com.roland.android.domain.data.Item
 import com.roland.android.domain.data.State
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -172,7 +172,7 @@ fun HomeScreen(
 
 				item {
 					CategoryList(
-						modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 30.dp),
+						modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 20.dp),
 						navigate = { id, name ->
 							navigate(Screens.ListScreen(id, name))
 						}
@@ -359,7 +359,13 @@ private fun CategoryList(
 ) {
 	val categories = Categories.entries.transformList(numberInRow = 3)
 
-	Column(modifier.fillMaxWidth()) {
+	Column(
+		modifier = modifier
+			.fillMaxWidth()
+			.clip(MaterialTheme.shapes.large)
+			.background(Color.White)
+			.padding(bottom = 10.dp)
+	) {
 		repeat(categories.size) { baseIndex ->
 			val items = categories[baseIndex]
 
@@ -386,7 +392,11 @@ private fun CategoryList(
 							contentDescription = categoryName,
 							modifier = Modifier.size(36.dp)
 						)
-						Text(categoryName, style = MaterialTheme.typography.bodySmall)
+						Text(
+							text = categoryName,
+							color = Black,
+							style = MaterialTheme.typography.bodySmall
+						)
 					}
 				}
 			}

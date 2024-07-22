@@ -110,13 +110,12 @@ fun FavoriteIconButton(
 		modifier = Modifier.scale(0.8f),
 		colors = IconButtonDefaults.iconButtonColors(
 			containerColor = if (itemIsFavorite) Color.Red else Color.Black.copy(alpha = 0.5f),
-			contentColor = if (itemIsFavorite) Color.White else Color.Black.copy(alpha = 0.5f)
+			contentColor = Color.White
 		)
 	) {
 		Icon(
 			imageVector = if (itemIsFavorite) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
-			contentDescription = stringResource(if (itemIsFavorite) R.string.add_to_wishlist else R.string.remove_from_wishlist),
-			tint = Color.White,
+			contentDescription = stringResource(if (itemIsFavorite) R.string.add_to_wishlist else R.string.remove_from_wishlist)
 		)
 	}
 }
