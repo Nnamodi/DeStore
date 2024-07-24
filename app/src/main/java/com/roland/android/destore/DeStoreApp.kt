@@ -7,6 +7,7 @@ import com.roland.android.destore.ui.screen.details.DetailsViewModel
 import com.roland.android.destore.ui.screen.home.HomeViewModel
 import com.roland.android.destore.ui.screen.list.ListViewModel
 import com.roland.android.destore.ui.screen.order_history.OrderHistoryViewModel
+import com.roland.android.destore.ui.screen.sign_up.SignUpViewModel
 import com.roland.android.domain.di.DomainModule.domainModule
 import com.roland.android.localdatasource.di.PersistenceModule.persistenceModule
 import com.roland.android.remotedatasource.di.NetworkModule.remoteDataModule
@@ -42,4 +43,5 @@ private val appModule = module {
 	viewModel { CartViewModel() }
 	viewModel { CheckoutViewModel() }
 	viewModel { OrderHistoryViewModel() }
+	viewModel { SignUpViewModel() }
 }
