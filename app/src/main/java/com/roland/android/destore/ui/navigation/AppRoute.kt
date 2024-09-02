@@ -1,13 +1,8 @@
 package com.roland.android.destore.ui.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -30,35 +25,28 @@ import com.roland.android.destore.ui.screen.order_history.OrderHistoryViewModel
 import com.roland.android.destore.utils.AnimationDirection
 import com.roland.android.destore.utils.Extensions.WISHLIST
 import com.roland.android.destore.utils.animatedComposable
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun AppRoute(
 	navActions: NavActions,
 	navController: NavHostController,
 	paddingValues: PaddingValues,
-	homeViewModel: HomeViewModel,
-	detailsViewModel: DetailsViewModel,
-	listViewModel: ListViewModel,
-	cartViewModel: CartViewModel,
-	checkoutViewModel: CheckoutViewModel,
-	orderHistoryViewModel: OrderHistoryViewModel
+	homeViewModel: HomeViewModel = koinViewModel(),
+	detailsViewModel: DetailsViewModel = koinViewModel(),
+	listViewModel: ListViewModel = koinViewModel(),
+	cartViewModel: CartViewModel = koinViewModel(),
+	checkoutViewModel: CheckoutViewModel = koinViewModel(),
+	orderHistoryViewModel: OrderHistoryViewModel = koinViewModel()
 ) {
-	val layoutDirection = LocalLayoutDirection.current
-
 	NavHost(
 		navController = navController,
-		startDestination = AppRoute.HomeScreen.route,
-		modifier = Modifier.padding(
-			PaddingValues(
-				start = paddingValues.calculateStartPadding(layoutDirection),
-				end = paddingValues.calculateEndPadding(layoutDirection),
-				bottom = paddingValues.calculateBottomPadding()
-			)
-		)
+		startDestination = AppRoute.HomeScreen.route
 	) {
 		composable(AppRoute.HomeScreen.route) {
 			HomeScreen(
 				uiState = homeViewModel.homeUiState,
+				bottomPadding = paddingValues.calculateBottomPadding(),
 				actions = homeViewModel::actions,
 				navigate = navActions::navigate
 			)
@@ -85,6 +73,7 @@ fun AppRoute(
 				uiState = listViewModel.listUiState,
 				categoryName = stringResource(R.string.all_products),
 				isCategoryScreen = false,
+				bottomPadding = paddingValues.calculateBottomPadding(),
 				actions = listViewModel::actions,
 				navigate = navActions::navigate
 			)
@@ -109,6 +98,7 @@ fun AppRoute(
 		composable(AppRoute.CartScreen.route) {
 			CartScreen(
 				uiState = cartViewModel.cartUiState,
+				bottomPadding = paddingValues.calculateBottomPadding(),
 				actions = cartViewModel::actions,
 				navigate = navActions::navigate
 			)

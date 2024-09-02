@@ -1,11 +1,15 @@
 package com.roland.android.destore.ui.screen.cart
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.roland.android.destore.R
 import com.roland.android.destore.ui.components.CartItems
 import com.roland.android.destore.ui.components.FixedBottomButton
@@ -20,12 +24,14 @@ import com.roland.android.domain.data.CartItem
 @Composable
 fun CartScreen(
 	uiState: CartUiState,
+	bottomPadding: Dp = 0.dp,
 	actions: (CartActions) -> Unit,
 	navigate: (Screens) -> Unit
 ) {
 	val cartItems = uiState.cartItems
 
 	Scaffold(
+		modifier = Modifier.padding(bottom = bottomPadding),
 		topBar = {
 			TopAppBar(
 				title = stringResource(R.string.my_cart),
@@ -71,6 +77,6 @@ private fun CartScreenPreview() {
 			CartItem(),
 			CartItem()
 		))
-		CartScreen(uiState, {}) {}
+		CartScreen(uiState, actions = {}) {}
 	}
 }

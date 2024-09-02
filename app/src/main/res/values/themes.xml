@@ -1,5 +1,5 @@
 <resources>
-    <color name="launch_icon_background">#4D320D</color>
+    <color name="launch_icon_background">#ffffff</color>
 
     <style name="Theme.DeStore" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">#FFFFFF</item>

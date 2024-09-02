@@ -91,6 +91,7 @@ typealias CategoryName = String
 @Composable
 fun HomeScreen(
 	uiState: HomeUiState,
+	bottomPadding: Dp = 0.dp,
 	actions: (HomeActions) -> Unit,
 	navigate: (Screens) -> Unit
 ) {
@@ -118,7 +119,7 @@ fun HomeScreen(
 				start = paddingValues.calculateStartPadding(layoutDirection),
 				top = paddingValues.calculateTopPadding(),
 				end = paddingValues.calculateEndPadding(layoutDirection),
-				bottom = paddingValues.calculateBottomPadding() + 50.dp
+				bottom = paddingValues.calculateBottomPadding() + bottomPadding + 50.dp
 			)) {
 				item {
 					UserInfo(userName = uiState.userInfo)
@@ -422,6 +423,6 @@ private enum class Categories(
 private fun HomeScreenPreview() {
 	DeStoreTheme {
 		val uiState = HomeUiState(State.Error(Exception("No internet connection")))
-		HomeScreen(uiState, {}) {}
+		HomeScreen(uiState, actions = {}) {}
 	}
 }

@@ -41,6 +41,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.roland.android.destore.R
@@ -63,6 +64,7 @@ fun VerticalGrid(
 	favoriteItems: List<Item>,
 	showOriginalPrice: Boolean = false,
 	snackbarHostState: SnackbarHostState,
+	bottomPadding: Dp = 0.dp,
 	onFavorite: (Item) -> Unit,
 	addToCart: (Item) -> Unit,
 	onItemClick: (ItemId, ItemPrice) -> Unit
@@ -81,7 +83,7 @@ fun VerticalGrid(
 		LazyVerticalGrid(
 			columns = GridCells.Adaptive(150.dp),
 			modifier = modifier.padding(start = 10.dp),
-			contentPadding = PaddingValues(bottom = 100.dp)
+			contentPadding = PaddingValues(bottom = bottomPadding + 100.dp)
 		) {
 			items(items.size) { index ->
 				val item = items[index]

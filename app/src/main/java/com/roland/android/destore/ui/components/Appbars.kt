@@ -4,6 +4,10 @@ package com.roland.android.destore.ui.components
 
 import android.annotation.SuppressLint
 import androidx.annotation.StringRes
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
@@ -101,9 +105,28 @@ fun TopAppBar(
 	)
 }
 
-@SuppressLint("RestrictedApi")
 @Composable
 fun NavBar(
+	navController: NavHostController,
+	modifier: Modifier = Modifier
+) {
+	val navBackStackEntry = navController.currentBackStackEntryAsState()
+	val currentRoute = navBackStackEntry.value?.destination?.route
+	val homeScreens = setOf(AppRoute.HomeScreen, AppRoute.AllProductsScreen, AppRoute.CartScreen).map { it.route }
+	val inHomeScreen = currentRoute in homeScreens
+
+	AnimatedVisibility(
+		visible = inHomeScreen,
+		enter = slideInVertically(tween(350, 1000)) { it },
+		exit = ExitTransition.None
+	) {
+		NavBarVisuals(navController, modifier)
+	}
+}
+
+@SuppressLint("RestrictedApi")
+@Composable
+private fun NavBarVisuals(
 	navController: NavHostController,
 	modifier: Modifier = Modifier
 ) {

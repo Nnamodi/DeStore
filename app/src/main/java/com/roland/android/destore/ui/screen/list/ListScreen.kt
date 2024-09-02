@@ -13,6 +13,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.roland.android.destore.R
 import com.roland.android.destore.ui.components.Colors
 import com.roland.android.destore.ui.components.TopAppBar
@@ -32,6 +34,7 @@ fun ListScreen(
 	categoryName: String,
 	isCategoryScreen: Boolean = true,
 	isWishlistScreen: Boolean = false,
+	bottomPadding: Dp = 0.dp,
 	actions: (ListActions) -> Unit,
 	navigate: (Screens) -> Unit
 ) {
@@ -65,6 +68,7 @@ fun ListScreen(
 				modifier = Modifier.padding(paddingValues),
 				favoriteItems = uiState.wishlistItems,
 				snackbarHostState = snackbarHostState,
+				bottomPadding = bottomPadding,
 				onFavorite = { actions(Favorite(it, !it.isFavorite(uiState.wishlistItems))) },
 				addToCart = {
 					actions(
