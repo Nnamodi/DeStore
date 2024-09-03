@@ -8,15 +8,18 @@ import androidx.room.Room
 import com.roland.android.domain.repository.local.CartRepository
 import com.roland.android.domain.repository.local.OrdersRepository
 import com.roland.android.domain.repository.local.UserRepository
+import com.roland.android.domain.repository.local.UtilRepository
 import com.roland.android.domain.repository.local.WishlistRepository
 import com.roland.android.localdatasource.database.AppDatabase
 import com.roland.android.localdatasource.database.CartDao
 import com.roland.android.localdatasource.database.OrdersDao
 import com.roland.android.localdatasource.database.WishlistDao
 import com.roland.android.localdatasource.datastore.UserDataStore
+import com.roland.android.localdatasource.datastore.UtilDataStore
 import com.roland.android.localdatasource.repository.CartRepositoryImpl
 import com.roland.android.localdatasource.repository.OrdersRepositoryImpl
 import com.roland.android.localdatasource.repository.UserRepositoryImpl
+import com.roland.android.localdatasource.repository.UtilRepositoryImpl
 import com.roland.android.localdatasource.repository.WishlistRepositoryImpl
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -62,10 +65,12 @@ object PersistenceModule {
 		single { provideWishlistDao(get()) }
 		single { provideCoroutineScope() }
 		single { UserDataStore() }
+		single { UtilDataStore() }
 		factory<CartRepository> { CartRepositoryImpl() }
 		factory<OrdersRepository> { OrdersRepositoryImpl() }
 		factory<WishlistRepository> { WishlistRepositoryImpl() }
 		factory<UserRepository> { UserRepositoryImpl() }
+		factory<UtilRepository> { UtilRepositoryImpl() }
 	}
 
 }

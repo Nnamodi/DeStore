@@ -21,9 +21,9 @@ class UtilDataStore : KoinComponent {
 		}
 	}
 
-	suspend fun updateLaunchStatus(launched: Boolean) {
+	suspend fun updateLaunchStatus() {
 		datastore.edit {
-			it[FIRST_LAUNCH_KEY] = launched
+			it[FIRST_LAUNCH_KEY] = true
 		}
 	}
 
