@@ -122,7 +122,7 @@ fun HomeScreen(
 				bottom = paddingValues.calculateBottomPadding() + bottomPadding + 50.dp
 			)) {
 				item {
-					UserInfo(userName = uiState.userInfo)
+					UserInfo(userName = uiState.userName)
 				}
 
 				item {
@@ -239,13 +239,14 @@ private fun UserInfo(
 		verticalAlignment = Alignment.CenterVertically
 	) {
 		Box(
-			Modifier
+			modifier = Modifier
+				.size(36.dp)
 				.clip(CircleShape)
-				.background(Brown)
+				.background(Brown),
+			contentAlignment = Alignment.Center
 		) {
 			Text(
 				text = avatarText.replace(",", "").uppercase(),
-				modifier = Modifier.padding(10.dp),
 				color = Black,
 				fontWeight = FontWeight.SemiBold,
 				letterSpacing = 0.sp
