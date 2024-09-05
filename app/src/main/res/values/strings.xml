@@ -68,4 +68,14 @@
     <string name="wishlist">My Wishlist</string>
     <string name="nothing_in_wishlist">Nothing in your wishlist.</string>
     <string name="order_no">Order no: %1$s</string>
+    <string name="name_label">Name</string>
+    <string name="name_placeholder">Nnamdi Igede</string>
+    <string name="email_label">Email</string>
+    <string name="email_placeholder">rolandnnamodi@gmail.com</string>
+    <string name="phone_label">Phone</string>
+    <string name="phone_placeholder">08011223344</string>
+    <string name="address_label">Address</string>
+    <string name="address_placeholder">No 7, John-Doe Rd. Lagos, Nigeria</string>
+    <string name="skip">SKIP</string>
+    <string name="sign_up">SIGN UP</string>
 </resources>
