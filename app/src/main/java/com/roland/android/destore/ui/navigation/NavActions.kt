@@ -5,9 +5,9 @@ import androidx.navigation.NavHostController
 
 class NavActions(private val navController: NavHostController) {
 
-	fun navigate(screen: Screens) {
+	fun navigate(screen: Screens, popBackStack: Boolean = false) {
 		when (screen) {
-			Screens.HomeScreen -> navigateToHomeScreen()
+			Screens.HomeScreen -> navigateToHomeScreen(popBackStack)
 			is Screens.DetailsScreen -> navigateToDetailsScreen(screen.itemId, screen.itemPrice)
 			is Screens.ListScreen -> navigateToListScreen(screen.categoryId, screen.categoryName)
 			Screens.AllProductsScreen -> navigateToAllProductsScreen()
@@ -16,12 +16,19 @@ class NavActions(private val navController: NavHostController) {
 			Screens.OrderCompleteScreen -> navigateToOrderCompleteScreen()
 			Screens.OrderHistoryScreen -> navigateToOrderHistoryScreen()
 			is Screens.OrderDetailsScreen -> navigateToOrderDetailsScreen(screen.orderNo)
+			is Screens.SignUpScreen -> navigateToSignUpScreen()
 			Screens.Back -> navigateUp()
 		}
 	}
 
-	private fun navigateToHomeScreen() {
-		navController.navigate(AppRoute.HomeScreen.route)
+	private fun navigateToHomeScreen(popBackStack: Boolean = false) {
+		navController.navigate(AppRoute.HomeScreen.route) {
+			if (!popBackStack) return@navigate
+			popUpTo(AppRoute.HomeScreen.route) {
+				inclusive = false
+			}
+			launchSingleTop = true
+		}
 	}
 
 	private fun navigateToDetailsScreen(
@@ -68,6 +75,10 @@ class NavActions(private val navController: NavHostController) {
 		)
 	}
 
+	private fun navigateToSignUpScreen() {
+		navController.navigate(AppRoute.SignUpScreen.route)
+	}
+
 	@SuppressLint("RestrictedApi")
 	private fun navigateUp() {
 		val navBackStackEntry = navController.currentBackStack.value
@@ -100,6 +111,7 @@ sealed class AppRoute(val route: String) {
 	data object OrderDetailsScreen: AppRoute("order_details_screen/{order_no}") {
 		fun routeWithId(orderNo: String) = String.format("order_details_screen/%s", orderNo)
 	}
+	data object SignUpScreen: AppRoute("sign_up_screen")
 }
 
 sealed class Screens {
@@ -112,5 +124,6 @@ sealed class Screens {
 	data object OrderCompleteScreen : Screens()
 	data object OrderHistoryScreen : Screens()
 	data class OrderDetailsScreen(val orderNo: String) : Screens()
+	data object SignUpScreen : Screens()
 	data object Back : Screens()
 }

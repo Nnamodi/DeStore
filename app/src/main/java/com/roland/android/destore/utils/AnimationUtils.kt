@@ -13,6 +13,8 @@ import androidx.navigation.NavDeepLink
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.roland.android.destore.utils.AnimationDirection.LeftRight
+import com.roland.android.destore.utils.AnimationDirection.SlideOutLeft
+import com.roland.android.destore.utils.AnimationDirection.UpDown
 
 // navigation animation
 fun NavGraphBuilder.animatedComposable(
@@ -26,24 +28,36 @@ fun NavGraphBuilder.animatedComposable(
 	arguments = arguments,
 	deepLinks = deepLinks,
 	enterTransition = {
-		if (animationDirection == LeftRight) {
-			slideInHorizontally(tween(500)) { it }
-		} else {
-			slideInVertically(tween(500)) { it }
+		when (animationDirection) {
+			LeftRight -> {
+				slideInHorizontally(tween(500)) { it }
+			}
+			UpDown -> {
+				slideInVertically(tween(500)) { it }
+			}
+			else -> null
 		}
 	},
-	exitTransition = null,
+	exitTransition = {
+		if (animationDirection == SlideOutLeft) {
+			slideOutHorizontally(tween(500)) { -it }
+		} else null
+	},
 	popEnterTransition = null,
 	popExitTransition = {
-		if (animationDirection == LeftRight) {
-			slideOutHorizontally(tween(500)) { it }
-		} else {
-			slideOutVertically(tween(500)) { it }
+		when (animationDirection) {
+			LeftRight -> {
+				slideOutHorizontally(tween(500)) { it }
+			}
+			UpDown -> {
+				slideOutVertically(tween(500)) { it }
+			}
+			else -> null
 		}
 	},
 	content = content
 )
 
 enum class AnimationDirection {
-	LeftRight, UpDown
+	LeftRight, UpDown, SlideOutLeft
 }

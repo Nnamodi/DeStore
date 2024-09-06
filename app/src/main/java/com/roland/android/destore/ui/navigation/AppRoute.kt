@@ -22,6 +22,8 @@ import com.roland.android.destore.ui.screen.list.ListViewModel
 import com.roland.android.destore.ui.screen.order_history.OrderDetailsScreen
 import com.roland.android.destore.ui.screen.order_history.OrderHistoryScreen
 import com.roland.android.destore.ui.screen.order_history.OrderHistoryViewModel
+import com.roland.android.destore.ui.screen.sign_up.SignUpScreen
+import com.roland.android.destore.ui.screen.sign_up.SignUpViewModel
 import com.roland.android.destore.utils.AnimationDirection
 import com.roland.android.destore.utils.Extensions.WISHLIST
 import com.roland.android.destore.utils.animatedComposable
@@ -37,11 +39,12 @@ fun AppRoute(
 	listViewModel: ListViewModel = koinViewModel(),
 	cartViewModel: CartViewModel = koinViewModel(),
 	checkoutViewModel: CheckoutViewModel = koinViewModel(),
-	orderHistoryViewModel: OrderHistoryViewModel = koinViewModel()
+	orderHistoryViewModel: OrderHistoryViewModel = koinViewModel(),
+	signUpViewModel: SignUpViewModel = koinViewModel(),
 ) {
 	NavHost(
 		navController = navController,
-		startDestination = AppRoute.HomeScreen.route
+		startDestination = AppRoute.SignUpScreen.route // signUpViewModel.startRoute
 	) {
 		composable(AppRoute.HomeScreen.route) {
 			HomeScreen(
@@ -128,6 +131,21 @@ fun AppRoute(
 			OrderDetailsScreen(
 				orderDetails = orderHistoryViewModel.orderDetails,
 				navigate = navActions::navigate
+			)
+		}
+		animatedComposable(
+			route = AppRoute.SignUpScreen.route,
+			animationDirection = AnimationDirection.SlideOutLeft
+		) {
+			SignUpScreen(
+				onSignUp = signUpViewModel::updateUserInfo,
+				navigateHome = {
+					navActions.navigate(
+						screen = Screens.HomeScreen,
+						popBackStack = true
+					)
+//					signUpViewModel.updateLaunchStatus()
+				}
 			)
 		}
 	}
