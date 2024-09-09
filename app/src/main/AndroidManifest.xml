@@ -10,7 +10,7 @@
         android:icon="@mipmap/launch_icon"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.DeStore"
+        android:theme="@style/Theme.Splash"
         tools:targetApi="31">
         <activity
             android:name="com.roland.android.destore.ui.MainActivity"

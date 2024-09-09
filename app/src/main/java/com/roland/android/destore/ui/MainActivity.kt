@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.Scaffold
 import androidx.navigation.compose.rememberNavController
+import com.roland.android.destore.R
 import com.roland.android.destore.ui.components.NavBar
 import com.roland.android.destore.ui.navigation.AppRoute
 import com.roland.android.destore.ui.navigation.NavActions
@@ -13,6 +14,7 @@ import com.roland.android.destore.ui.theme.DeStoreTheme
 
 class MainActivity : ComponentActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {
+		setTheme(R.style.Theme_DeStore)
 		super.onCreate(savedInstanceState)
 		enableEdgeToEdge()
 		setContent {

@@ -1,7 +1,17 @@
-<resources>
-    <color name="launch_icon_background">#ffffff</color>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <color name="primaryColor">#FFFFFF</color>
 
+    // App theme
     <style name="Theme.DeStore" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">#FFFFFF</item>
+        <item name="colorPrimary">@color/primaryColor</item>
+    </style>
+
+    // Splash theme
+    <style name="Theme.Splash" parent="Theme.SplashScreen">
+        <item name="android:colorPrimary">@color/primaryColor</item>
+        <item name="windowSplashScreenBackground">@color/primaryColor</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/app_icon</item>
+        <item name="android:windowSplashScreenBehavior" tools:targetApi="tiramisu">icon_preferred</item>
+        <item name="postSplashScreenTheme">@style/Theme.DeStore</item>
     </style>
 </resources>

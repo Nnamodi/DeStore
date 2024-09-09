@@ -78,6 +78,9 @@ dependencies {
 	implementation(project(path = ":localDataSource"))
 	implementation(project(path = ":remoteDataSource"))
 
+	// splash
+	implementation(libs.androidx.splashscreen)
+
 	// test
 	testImplementation(libs.junit)
 	androidTestImplementation(libs.androidx.junit)
