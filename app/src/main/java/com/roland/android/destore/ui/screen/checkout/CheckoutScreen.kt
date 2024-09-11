@@ -14,6 +14,7 @@ import com.roland.android.destore.ui.navigation.AppRoute
 import com.roland.android.destore.ui.navigation.Screens
 import com.roland.android.destore.ui.theme.DeStoreTheme
 import com.roland.android.domain.data.CartItem
+import com.roland.android.domain.data.UserInfo
 
 @Composable
 fun CheckoutScreen(
@@ -40,11 +41,17 @@ fun CheckoutScreen(
 			FixedBottomButton(
 				screen = AppRoute.CheckoutScreen,
 				buttonText = stringResource(R.string.proceed),
+				enabled = uiState.userInfo.isSet(),
 				onButtonClick = { actions(CheckoutActions.Checkout) },
 				navigate = navigate
 			)
 		}
 	}
+}
+
+private fun UserInfo.isSet(): Boolean {
+	return name.isNotEmpty() && email.isNotEmpty()
+			&& phone.isNotEmpty() && address.isNotEmpty()
 }
 
 @Preview

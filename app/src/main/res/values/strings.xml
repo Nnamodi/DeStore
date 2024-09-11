@@ -78,4 +78,5 @@
     <string name="address_placeholder">No 7, John-Doe Rd. Lagos, Nigeria</string>
     <string name="skip">SKIP</string>
     <string name="sign_up">SIGN UP</string>
+    <string name="save">Save</string>
 </resources>

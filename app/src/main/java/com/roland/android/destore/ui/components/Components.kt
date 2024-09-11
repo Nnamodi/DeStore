@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.CardTravel
 import androidx.compose.material.icons.rounded.Done
@@ -23,6 +24,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.shapes
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -33,7 +35,10 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.roland.android.destore.R
@@ -52,6 +57,7 @@ fun FixedBottomButton(
 	modifier: Modifier = Modifier,
 	subTitle: String = "",
 	title: String = "",
+	enabled: Boolean = true,
 	screen: AppRoute,
 	buttonText: String,
 	onButtonClick: () -> Unit = {},
@@ -90,6 +96,7 @@ fun FixedBottomButton(
 					else -> {}
 				}
 			},
+			enabled = enabled,
 			shape = RoundedCornerShape(8.dp)
 		) {
 			if (screen is AppRoute.DetailsScreen) {
@@ -97,6 +104,37 @@ fun FixedBottomButton(
 			}
 			Text(text = buttonText)
 		}
+	}
+}
+
+@Composable
+fun InputTextField(
+	label: String,
+	text: String,
+	modifier: Modifier = Modifier,
+	placeholder: String,
+	leadingIcon: ImageVector,
+	keyboardCapitalization: KeyboardCapitalization = KeyboardCapitalization.Words,
+	keyboardType: KeyboardType,
+	onValueChange: (String) -> Unit
+) {
+	Column(modifier) {
+		OutlinedTextField(
+			value = text,
+			onValueChange = onValueChange,
+			modifier = Modifier
+				.fillMaxWidth()
+				.padding(horizontal = 20.dp)
+				.padding(top = 20.dp),
+			label = { Text(label) },
+			placeholder = { Text(placeholder, Modifier.alpha(0.5f)) },
+			leadingIcon = { Icon(leadingIcon, label) },
+			keyboardOptions = KeyboardOptions(
+				capitalization = keyboardCapitalization,
+				keyboardType = keyboardType
+			),
+			singleLine = true,
+		)
 	}
 }
 
