@@ -3,6 +3,8 @@ package com.roland.android.destore.ui.screen.checkout
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -22,6 +24,8 @@ fun CheckoutScreen(
 	actions: (CheckoutActions) -> Unit,
 	navigate: (Screens) -> Unit
 ) {
+	val openEditUserInfoSheet = rememberSaveable { mutableStateOf(false) }
+	val openEditAddressSheet = rememberSaveable { mutableStateOf(false) }
 	val cartItems = uiState.cartItems
 
 	Scaffold(
@@ -36,7 +40,9 @@ fun CheckoutScreen(
 				backToCart = { navigate(Screens.Back) },
 				viewDetails = { id, price ->
 					navigate(Screens.DetailsScreen(id, price))
-				}
+				},
+				navigateToEditUserInfo = { openEditUserInfoSheet.value = true },
+				navigateToEditAddress = { openEditAddressSheet.value = true }
 			)
 			FixedBottomButton(
 				screen = AppRoute.CheckoutScreen,
@@ -44,6 +50,30 @@ fun CheckoutScreen(
 				enabled = uiState.userInfo.isSet(),
 				onButtonClick = { actions(CheckoutActions.Checkout) },
 				navigate = navigate
+			)
+		}
+
+		if (openEditUserInfoSheet.value) {
+			InputUserInfoSheet(
+				userInfo = uiState.userInfo,
+				onInfoChange = { actions(CheckoutActions.UpdateUserInfo(it)) },
+				onDismiss = { openEditUserInfoSheet.value = false }
+			)
+		}
+
+		if (openEditAddressSheet.value) {
+			InputAddressSheet(
+				address = uiState.userInfo.address,
+				onAddressChange = { newAddress ->
+					val newUserInfo = UserInfo(
+						name = uiState.userInfo.name,
+						email = uiState.userInfo.email,
+						phone = uiState.userInfo.phone,
+						address = newAddress
+					)
+					actions(CheckoutActions.UpdateUserInfo(newUserInfo))
+				},
+				onDismiss = { openEditAddressSheet.value = false }
 			)
 		}
 	}

@@ -229,7 +229,9 @@ fun CartItems(
 	remove: (CartItem) -> Unit = {},
 	removeFromCart: (CartItem) -> Unit = {},
 	backToCart: () -> Unit = {},
-	viewDetails: (ItemId, ItemPrice) -> Unit = { _, _ ->}
+	viewDetails: (ItemId, ItemPrice) -> Unit = { _, _ ->},
+	navigateToEditUserInfo: () -> Unit = {},
+	navigateToEditAddress: () -> Unit = {}
 ) {
 	val layoutDirection = LocalLayoutDirection.current
 	val items = cartItems.distinctBy { it.id } // will refactor this line for better experience on cart screen.
@@ -285,29 +287,36 @@ fun CartItems(
 			item {
 				Container(
 					header = stringResource(R.string.personal_information),
-					showNavigateButton = false,
-					navigate = {}
+					navigate = navigateToEditUserInfo
 				) {
 					Column {
 						Row(Modifier.fillMaxWidth()) {
-							Label(label = userInfo.name, icon = Icons.Rounded.PermContactCalendar)
+							Label(
+								label = userInfo.name.withPlaceholder,
+								icon = Icons.Rounded.PermContactCalendar
+							)
 							Spacer(Modifier.weight(1f))
-							Label(label = userInfo.phone, icon = Icons.Rounded.Numbers)
+							Label(
+								label = userInfo.phone.withPlaceholder,
+								icon = Icons.Rounded.Numbers
+							)
 						}
-						Label(label = userInfo.email, icon = Icons.Rounded.AttachEmail)
+						Label(
+							label = userInfo.email.withPlaceholder,
+							icon = Icons.Rounded.AttachEmail
+						)
 					}
 				}
 			}
 			item {
 				Container(
 					header = stringResource(R.string.delivery_option),
-					showNavigateButton = false,
-					navigate = {}
+					navigate = navigateToEditAddress
 				) {
 					Row(Modifier.fillMaxWidth()) {
 						Label(label = stringResource(R.string.pick_up_point), icon = Icons.Rounded.LocalConvenienceStore)
 						Spacer(Modifier.weight(1f))
-						Label(label = userInfo.address)
+						Label(label = userInfo.address.withPlaceholder)
 					}
 				}
 			}
@@ -444,3 +453,5 @@ private fun Label(
 		Text(text = label, fontSize = 13.sp)
 	}
 }
+
+private val String.withPlaceholder get() = takeIf { it.isNotEmpty() } ?: "___"

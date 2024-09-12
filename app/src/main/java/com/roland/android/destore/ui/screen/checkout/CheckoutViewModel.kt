@@ -7,14 +7,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.roland.android.destore.data.cartItemsFlow
 import com.roland.android.destore.data.ordersFlow
+import com.roland.android.destore.data.userInfoFlow
 import com.roland.android.destore.utils.Extensions.round
 import com.roland.android.domain.data.CartItem
 import com.roland.android.domain.data.OrderDetails
 import com.roland.android.domain.data.State
+import com.roland.android.domain.data.UserInfo
 import com.roland.android.domain.usecase.CartUseCase
 import com.roland.android.domain.usecase.CartUseCaseActions
 import com.roland.android.domain.usecase.OrdersUseCase
 import com.roland.android.domain.usecase.OrdersUseCaseActions
+import com.roland.android.domain.usecase.UserUseCase
+import com.roland.android.domain.usecase.UserUseCaseActions
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -26,6 +30,7 @@ import java.util.UUID
 class CheckoutViewModel : ViewModel(), KoinComponent {
 	private val cartUseCase: CartUseCase by inject()
 	private val ordersUseCase: OrdersUseCase by inject()
+	private val userUseCase: UserUseCase by inject()
 
 	private val _checkoutUiState = MutableStateFlow(CheckoutUiState())
 	var checkoutUiState by mutableStateOf(_checkoutUiState.value); private set
@@ -33,6 +38,11 @@ class CheckoutViewModel : ViewModel(), KoinComponent {
 	private var cartItems by mutableStateOf<List<CartItem>>(emptyList())
 
 	init {
+		viewModelScope.launch {
+			userInfoFlow.collect { info ->
+				_checkoutUiState.update { it.copy(userInfo = info) }
+			}
+		}
 		viewModelScope.launch {
 			cartItemsFlow.collect { items ->
 				cartItems = items
@@ -48,7 +58,22 @@ class CheckoutViewModel : ViewModel(), KoinComponent {
 
 	fun actions(action: CheckoutActions) {
 		when (action) {
+			is CheckoutActions.UpdateUserInfo -> updateUserInfo(action.userInfo)
 			CheckoutActions.Checkout -> checkout()
+		}
+	}
+
+	private fun updateUserInfo(userInfo: UserInfo) {
+		viewModelScope.launch {
+			userUseCase.execute(
+				UserUseCase.Request(
+					UserUseCaseActions.UpdateUserInfo(userInfo)
+				)
+			)
+				.collect { data ->
+					if (data !is State.Success) return@collect
+					userInfoFlow.value = data.data.userInfo
+				}
 		}
 	}
 
